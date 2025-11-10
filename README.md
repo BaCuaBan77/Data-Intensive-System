@@ -57,7 +57,7 @@ The database includes the following tables:
 
 3. **Verify the services are running**:
    ```bash
-   docker compose ps
+   docker ps
    ```
 
 ## Database Connections
@@ -117,8 +117,8 @@ The replica database is configured to stream data from the primary database usin
 
 ### Shard Database
 - 30 different users
-- 30 different currencies (cryptocurrency-themed)
-- 30 different shops
+- 2 currencies (same as primary: Gold Coins, Silver Pieces)
+- 2 shops (same as primary: Elite Chess Store, Classic Chess Shop)
 - 30 different categories
 - 30 different matches
 - 30 different items
