@@ -205,5 +205,4 @@ This project is for educational purposes.
 
 ## Author
 
-Long Le - long.le@observis.fi
-
+Long Le - Long.n.le@student.lut.fi
