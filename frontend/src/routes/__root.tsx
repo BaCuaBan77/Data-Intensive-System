@@ -27,7 +27,7 @@ function RootComponent() {
                     </label>
 
                     <div className="flex-1">
-                        <span className="text-lg font-bold">Data Intensive System</span>
+                        <span className="text-lg font-bold">Magichess Admin Control Panel</span>
                     </div>
                 </div>
 
@@ -40,9 +40,9 @@ function RootComponent() {
             {/* Sidebar */}
             <div className="drawer-side is-drawer-close:overflow-visible">
                 <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
-                <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
+                <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64 justify-center">
                     {/* Sidebar content here */}
-                    <ul className="menu w-full grow">
+                    <ul className="menu w-full">
                         {/* Dashboard */}
                         <li>
                             <Link
@@ -50,7 +50,7 @@ function RootComponent() {
                                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                                 data-tip="Dashboard"
                             >
-                                <Dashboard className="my-1.5 inline-block size-4" />
+                                <Dashboard className="my-1.5 inline-block size-4" color="secondary"/>
                                 <span className="is-drawer-close:hidden">Dashboard</span>
                             </Link>
                         </li>
@@ -62,7 +62,7 @@ function RootComponent() {
                                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right" 
                                 data-tip="Shop"
                             >
-                                <Shop className="my-1.5 inline-block size-4" />
+                                <Shop className="my-1.5 inline-block size-4" color="action"/>
                                 <span className="is-drawer-close:hidden">Shop</span>
                             </Link>
                         </li>
@@ -82,7 +82,7 @@ function RootComponent() {
                         {/* Users */}
                         <li>
                             <Link
-                                to="/"
+                                to="/users"
                                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                                 data-tip="Users"
                             >
