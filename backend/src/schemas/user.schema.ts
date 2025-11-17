@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // GET /users
-export const userSchema = z.object({
+export const UserSchema = z.object({
   id: z.number().int(),
   source: z.enum(["primary", "shard"]), // TEMP while ids are the same in databases
 
@@ -21,4 +21,11 @@ export const userSchema = z.object({
   rating: z.number(),
 });
 
-export type User = z.infer<typeof userSchema>;
+export type User = z.infer<typeof UserSchema>;
+
+// GET /users?email=
+export const SearchSchema = z.object({
+  email: z.coerce.string().trim().optional(),
+});
+
+export type SearchQuery = z.infer<typeof SearchSchema>;
