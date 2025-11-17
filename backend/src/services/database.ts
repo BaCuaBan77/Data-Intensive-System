@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import { Pool } from "pg";
 
 export const primaryDb = new Pool({
   connectionString: process.env.PRIMARY_DATABASE_URL

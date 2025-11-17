@@ -3,6 +3,7 @@ import { z } from "zod";
 // GET /users
 export const userSchema = z.object({
   id: z.number().int(),
+  source: z.enum(["primary", "shard"]), // TEMP while ids are the same in databases
 
   email: z.email(),
   password: z.string(),
