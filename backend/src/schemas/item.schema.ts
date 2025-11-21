@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // POST /items
-export const createItemSchema = z.object({
+export const CreateItemSchema = z.object({
   name: z.string().min(1),
   description: z.string(),
   price: z.coerce.number(),
@@ -12,11 +12,12 @@ export const createItemSchema = z.object({
   shop_id: z.number().int(),
 });
 
-export type CreateItemInput = z.infer<typeof createItemSchema>;
+export type CreateItemInput = z.infer<typeof CreateItemSchema>;
 
 // GET /items
-export const itemSchema = z.object({
+export const ItemSchema = z.object({
   id: z.number().int(),
+  source: z.enum(["primary", "shard"]), // TEMP while ids are the same in databases
 
   name: z.string(),
   description: z.string(),
@@ -27,13 +28,13 @@ export const itemSchema = z.object({
   category: z.number().int(),
   shop_id: z.number().int(),
 
-  created_at: z.iso.datetime(),
+  created_at: z.date(),
 });
 
-export type Item = z.infer<typeof itemSchema>;
+export type Item = z.infer<typeof ItemSchema>;
 
 // PATCH /items/:id
-export const updateItemSchema = z.object({
+export const UpdateItemSchema = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
   price: z.coerce.number().optional(),
@@ -44,4 +45,4 @@ export const updateItemSchema = z.object({
   shop_id: z.number().int().optional(),
 });
 
-export type UpdateItemInput = z.infer<typeof updateItemSchema>;
+export type UpdateItemInput = z.infer<typeof UpdateItemSchema>;
