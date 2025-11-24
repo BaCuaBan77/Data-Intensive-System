@@ -1,10 +1,14 @@
 import express, { Request, Response } from "express";
+import cors from "cors";
 import usersRouter from "./routes/user.router";
 import itemsRouter from "./routes/item.route";
 import shopsRouter from "./routes/shop.router";
 import categoriesRouter from "./routes/category.route";
 
 const app = express();
+
+// Enable CORS for all routes and origins
+app.use(cors());
 
 app.use(express.json());
 

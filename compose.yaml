@@ -1,3 +1,4 @@
+name: magichess
 services:
   primary:
     image: postgres:16
@@ -67,6 +68,24 @@ services:
       - replica
     networks:
       - pgnet
+  
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - primary
+      - shard
+      - replica
+      - backend
+    networks:
+      - pgnet
+    command: npm run dev
 
 volumes:
   primary-data:
