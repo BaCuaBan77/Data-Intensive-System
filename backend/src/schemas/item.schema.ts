@@ -14,10 +14,9 @@ export const CreateItemSchema = z.object({
 
 export type CreateItemInput = z.infer<typeof CreateItemSchema>;
 
-// GET /items
+// GET /items?shop_id=
 export const ItemSchema = z.object({
   id: z.number().int(),
-  source: z.enum(["primary", "shard"]), // TEMP while ids are the same in databases
 
   name: z.string(),
   description: z.string(),
@@ -25,13 +24,19 @@ export const ItemSchema = z.object({
   picture: z.string().nullable(),
   status: z.string(),
 
-  category: z.number().int(),
+  category: z.string(),
   shop_id: z.number().int(),
 
   created_at: z.date(),
 });
 
 export type Item = z.infer<typeof ItemSchema>;
+
+export const ItemFilterSchema = z.object({
+  shop_id: z.coerce.number(),
+});
+
+export type ItemFilter = z.infer<typeof ItemFilterSchema>;
 
 // PATCH /items/:id
 export const UpdateItemSchema = z.object({
