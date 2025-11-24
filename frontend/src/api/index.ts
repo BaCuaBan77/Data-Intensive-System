@@ -20,6 +20,8 @@ export const UserResponseSchema = z.object({
 // Request schemas for search parameters
 export const UserSearchParamsSchema = z.object({
   email: z.string().optional(),
+  status: z.string().optional(),
+  role: z.string().optional(),
 })
 
 // Infer TypeScript types from Zod schemas
@@ -51,9 +53,42 @@ function buildQueryString(params: Record<string, string | number | boolean | und
   const filteredParams = Object.entries(params)
     .filter(([, value]) => value !== undefined && value !== null && value !== '')
     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
-  
+
   return filteredParams.length > 0 ? `?${filteredParams.join('&')}` : ''
 }
+
+// READ ENDPOINTS
+
+// Shop Schema
+export const ShopSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  type: z.string(),
+})
+
+// Category Schema
+export const CategorySchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  description: z.string(),
+})
+
+// Item Schema
+export const ItemSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  description: z.string(),
+  price: z.number(),
+  picture: z.string().nullable(),
+  status: z.string(),
+  category: z.string(), // Category name as per backend schema
+  shop_id: z.number(),
+  created_at: z.string(), // Date comes as string from JSON
+})
+
+export type Shop = z.infer<typeof ShopSchema>
+export type Category = z.infer<typeof CategorySchema>
+export type Item = z.infer<typeof ItemSchema>
 
 // READ ENDPOINTS
 
@@ -68,10 +103,41 @@ export async function getUsers(searchParams?: UserSearchParams) {
   return z.array(UserResponseSchema).parse(response)
 }
 
+/**
+ * Get all shops
+ * @returns Array of shops
+ */
+export async function getShops() {
+  const response = await apiRequest<Shop[]>('/shops')
+  return z.array(ShopSchema).parse(response)
+}
+
+/**
+ * Get all categories
+ * @returns Array of categories
+ */
+export async function getCategories() {
+  const response = await apiRequest<Category[]>('/categories')
+  return z.array(CategorySchema).parse(response)
+}
+
+/**
+ * Get items for a specific shop
+ * @param shopId The ID of the shop to get items for
+ * @returns Array of items
+ */
+export async function getItems(shopId: number) {
+  const response = await apiRequest<Item[]>(`/items?shop_id=${shopId}`)
+  return z.array(ItemSchema).parse(response)
+}
+
 // Default export for convenience
 const api = {
   // READ ENDPOINTS
   getUsers,
+  getShops,
+  getCategories,
+  getItems,
 }
 
 export default api

@@ -17,27 +17,27 @@ export function Users() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Create search parameters for API using debounced term
+  // Create search parameters for API using debounced term and filters
   const searchParams = useMemo(() => {
-    const params: { email?: string } = {};
+    const params: { email?: string; status?: string; role?: string } = {};
     if (debouncedSearchTerm.trim()) {
       params.email = debouncedSearchTerm.trim();
     }
+    if (statusFilter !== 'all') {
+      params.status = statusFilter;
+    }
+    if (roleFilter !== 'all') {
+      params.role = roleFilter;
+    }
     return params;
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, statusFilter, roleFilter]);
 
   // Fetch users from backend with email search
   const { data: users = [], isLoading, error } = useUsersQuery(searchParams);
 
   // Filter users based on status and role filters (client-side for non-API filters)
-  const filteredUsers = useMemo(() => {
-    return users.filter(user => {
-      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
-      const matchesRole = roleFilter === 'all' || user.role === roleFilter;
-      
-      return matchesStatus && matchesRole;
-    });
-  }, [users, statusFilter, roleFilter]);
+  // Use users directly as they are now filtered on the server
+  const filteredUsers = users;
 
   const handleAdminAction = (action: string, userId: number, userName: string | null) => {
     // TODO: Implement API calls for admin actions
@@ -85,9 +85,9 @@ export function Users() {
                     <span className="label-text font-semibold">Search by Email</span>
                   </label>
                   <div className="input-group flex">
-                    <input 
-                      type="email" 
-                      placeholder="Enter email to search..." 
+                    <input
+                      type="email"
+                      placeholder="Enter email to search..."
                       className="input input-bordered w-full"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -103,7 +103,7 @@ export function Users() {
                   <label className="label">
                     <span className="label-text font-semibold">Status</span>
                   </label>
-                  <select 
+                  <select
                     className="select select-bordered w-full"
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
@@ -119,7 +119,7 @@ export function Users() {
                   <label className="label">
                     <span className="label-text font-semibold">Role</span>
                   </label>
-                  <select 
+                  <select
                     className="select select-bordered w-full"
                     value={roleFilter}
                     onChange={(e) => setRoleFilter(e.target.value)}
@@ -140,7 +140,7 @@ export function Users() {
               <div className="stat-value text-primary">{filteredUsers.length}</div>
               <div className="stat-desc">of {users.length} total</div>
             </div>
-            
+
             <div className="stat">
               <div className="stat-title">Active Users</div>
               <div className="stat-value text-success">
@@ -148,7 +148,7 @@ export function Users() {
               </div>
               <div className="stat-desc">Currently online</div>
             </div>
-            
+
             <div className="stat">
               <div className="stat-title">Admins</div>
               <div className="stat-value text-info">
@@ -253,7 +253,7 @@ export function Users() {
                               <div className="divider my-1"></div>
                               {user.status === 'active' ? (
                                 <li>
-                                  <a 
+                                  <a
                                     className="text-warning"
                                     onClick={() => handleAdminAction('suspend', user.id, user.full_name)}
                                   >
@@ -262,7 +262,7 @@ export function Users() {
                                 </li>
                               ) : (
                                 <li>
-                                  <a 
+                                  <a
                                     className="text-success"
                                     onClick={() => handleAdminAction('activate', user.id, user.full_name)}
                                   >
@@ -279,7 +279,7 @@ export function Users() {
                               )}
                               <div className="divider my-1"></div>
                               <li>
-                                <a 
+                                <a
                                   className="text-error"
                                   onClick={() => handleAdminAction('delete', user.id, user.full_name)}
                                 >

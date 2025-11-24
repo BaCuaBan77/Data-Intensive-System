@@ -10,7 +10,35 @@ export function useUsersQuery(
         queryKey: ["users", searchParams],
         queryFn: async () => {
             return api.getUsers(searchParams);
-        },      
+        },
         enabled,
+    });
+}
+
+export function useShopsQuery() {
+    return useQuery({
+        queryKey: ["shops"],
+        queryFn: async () => {
+            return api.getShops();
+        },
+    });
+}
+
+export function useCategoriesQuery() {
+    return useQuery({
+        queryKey: ["categories"],
+        queryFn: async () => {
+            return api.getCategories();
+        },
+    });
+}
+
+export function useItemsQuery(shopId: number) {
+    return useQuery({
+        queryKey: ["items", shopId],
+        queryFn: async () => {
+            return api.getItems(shopId);
+        },
+        enabled: !!shopId,
     });
 }
