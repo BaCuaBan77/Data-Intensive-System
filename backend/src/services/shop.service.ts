@@ -1,17 +1,11 @@
 import { QueryConfig } from "pg";
-import { primaryDb } from "./database"
+import { primaryDb, queryAndParse } from "./database"
 import { ShopSchema, Shop } from "../schemas/shop.schema";
 
-const getShopsFromPrimaryDb = async (sqlQuery: QueryConfig): Promise<Shop[]> => {
-  if (sqlQuery.values === null) {
-    sqlQuery.values = [];
-  }
-
-  const primaryShops = await primaryDb.query(sqlQuery);
-
-  const primaryShopsParsed = primaryShops.rows.map((s) => ShopSchema.parse(s));
-
-  return primaryShopsParsed;
+export const getShopsFromPrimaryDb = async (
+  sqlQuery: QueryConfig
+): Promise<Shop[]> => {
+  return queryAndParse(primaryDb, sqlQuery, ShopSchema);
 };
 
 export const getAllShops = async (): Promise<Shop[]> => {
