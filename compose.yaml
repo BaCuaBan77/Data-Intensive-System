@@ -1,0 +1,96 @@
+name: magichess
+services:
+  primary:
+    image: postgres:16
+    container_name: pg_primary
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: primary_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - primary-data:/var/lib/postgresql/data
+      - ./db/init/primary-init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/init/primary-config.sh:/docker-entrypoint-initdb.d/2-config.sh
+    networks:
+      - pgnet
+
+  shard:
+    image: postgres:16
+    container_name: pg_shard
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: shard_pass
+    ports:
+      - "5435:5432"
+    volumes:
+      - shard-data:/var/lib/postgresql/data
+      - ./db/init/shard-init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - pgnet
+
+  replica:
+    build:
+      context: ./db
+      dockerfile: Dockerfile.replica
+    container_name: pg_replica
+    environment:
+      REPLICA_USER: replicator
+      REPLICA_PASSWORD: replica_pass
+      PRIMARY_HOST: primary
+      PRIMARY_PORT: 5432
+    depends_on:
+      - primary
+    ports:
+      - "5434:5432"
+    volumes:
+      - replica-data:/var/lib/postgresql/data
+      - ./db/setup-replica.sh:/docker-entrypoint-initdb.d/setup-replica.sh
+    networks:
+      - pgnet
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/usr/src/app
+    environment:
+      PRIMARY_DATABASE_URL: "postgresql://postgres:primary_pass@pg_primary:5432/postgres"
+      SHARD_DATABASE_URL: "postgresql://postgres:shard_pass@pg_shard:5432/postgres"
+      PORT: 3000
+    depends_on:
+      - primary
+      - shard
+      - replica
+    networks:
+      - pgnet
+  
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - primary
+      - shard
+      - replica
+      - backend
+    networks:
+      - pgnet
+    command: npm run dev
+
+volumes:
+  primary-data:
+  shard-data:
+  replica-data:
+
+networks:
+  pgnet:
