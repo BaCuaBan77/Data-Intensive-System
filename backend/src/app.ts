@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { errorHandler } from "./utils/middleware";
 import cors from "cors";
 import usersRouter from "./routes/user.router";
 import itemsRouter from "./routes/item.route";
@@ -16,6 +17,8 @@ app.use("/api/users", usersRouter);
 app.use("/api/items", itemsRouter);
 app.use("/api/shops", shopsRouter);
 app.use("/api/categories", categoriesRouter);
+
+app.use(errorHandler);
 
 app.get("/", (_req: Request, res: Response) => {
   // TEMP
