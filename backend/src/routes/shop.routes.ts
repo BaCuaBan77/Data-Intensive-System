@@ -3,6 +3,17 @@ import { getShops } from "../controllers/shop.controller";
 
 const shopsRouter = Router();
 
+/**
+ * @openapi
+ * /api/shops:
+ *   get:
+ *     tags:
+ *       - Shops
+ *     summary: Get all shops
+ *     responses:
+ *       200:
+ *         description: Returns all shops
+ */
 shopsRouter.get("/", getShops);
 
 export default shopsRouter;

@@ -40,7 +40,8 @@
     // "isolatedModules": true,
     // "noUncheckedSideEffectImports": true,
     // "moduleDetection": "force",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "removeComments": false, // To have @openapi for swagger
   },
   "include": ["src/**/*.ts"],
   "exclude": ["build", "node_modules"]

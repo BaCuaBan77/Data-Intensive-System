@@ -1,10 +1,11 @@
 import express, { Request, Response } from "express";
+import { swaggerUi, swaggerSpec } from "./swagger";
 import { errorHandler } from "./utils/middleware";
 import cors from "cors";
-import usersRouter from "./routes/user.router";
-import itemsRouter from "./routes/item.route";
-import shopsRouter from "./routes/shop.router";
-import categoriesRouter from "./routes/category.route";
+import usersRouter from "./routes/user.routes";
+import itemsRouter from "./routes/item.routes";
+import shopsRouter from "./routes/shop.routes";
+import categoriesRouter from "./routes/category.routes";
 
 const app = express();
 
@@ -17,6 +18,8 @@ app.use("/api/users", usersRouter);
 app.use("/api/items", itemsRouter);
 app.use("/api/shops", shopsRouter);
 app.use("/api/categories", categoriesRouter);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(errorHandler);
 
