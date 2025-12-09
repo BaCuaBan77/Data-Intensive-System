@@ -10,10 +10,10 @@ const getUsersFromDbs = async (sqlQuery: QueryConfig): Promise<User[]> => {
   const primaryUsers = await primaryDb.query(sqlQuery);
   const shardUsers = await shardDb.query(sqlQuery);
 
-  const primaryUsersParsed = primaryUsers.rows.map((u) => UserSchema.parse({ ...u, source: "primary" }));
-  const shardUsersParsed = shardUsers.rows.map((u) => UserSchema.parse({ ...u, source: "shard" }));
+  const primaryUsersParsed = primaryUsers.rows.map((u) => UserSchema.parse(u));
+  const shardUsersParsed = shardUsers.rows.map((u) => UserSchema.parse(u));
 
-  return [...primaryUsersParsed, ...shardUsersParsed];
+  return [...primaryUsersParsed, ...shardUsersParsed].sort((a, b) => a.id - b.id);
 };
 
 export const findUsers = async ({
