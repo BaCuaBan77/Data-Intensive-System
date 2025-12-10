@@ -17,7 +17,7 @@ export const getItems = async (request: Request, response: Response, next: NextF
 
 export const createItem = async (request: Request, response: Response, next: NextFunction) => {
   try {
-    const parsed  = CreateItemSchema.parse(request.body);
+    const parsed = CreateItemSchema.parse(request.body);
 
     const item = await insertItem(parsed);
 
