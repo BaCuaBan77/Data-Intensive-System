@@ -57,14 +57,36 @@ export type ItemFilter = z.infer<typeof ItemFilterSchema>;
 
 // PATCH /items/:id
 export const UpdateItemSchema = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  price: z.coerce.number().optional(),
-  picture: z.string().optional(),
-  status: z.string().optional(),
+  name: z.string()
+    .min(1)
+    .max(255)
+    .optional(),
 
-  category: z.number().int().optional(),
-  shop_id: z.number().int().optional(),
+  description: z.string()
+    .max(255)
+    .optional(),
+
+  price: z.coerce.number()
+    .min(0)
+    .optional(),
+
+  picture: z.string()
+    .max(255)
+    .optional(),
+
+  status: z.enum(["available", "not_available"]).optional(),
+
+  category: z.number()
+    .int()
+    .min(1)
+    .max(30)
+    .optional(),
+
+  shop_id: z.number()
+    .int()  
+    .min(1)
+    .max(2)
+    .optional(),
 });
 
 export type UpdateItemInput = z.infer<typeof UpdateItemSchema>;
