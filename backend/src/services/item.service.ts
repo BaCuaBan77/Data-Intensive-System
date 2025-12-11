@@ -1,25 +1,8 @@
-import { QueryConfig } from "pg";
 import { queryFromPrimary, queryToBothDbs } from "./database"
 import { CreateItemInput, ItemSchema, Item, UpdateItemInput, ItemDeletedSchema, ItemDeleted } from "../schemas/item.schema";
 
-const getItemsFromPrimaryDb = async (
-  sqlQuery: QueryConfig
-): Promise<Item[]> => {
-  return queryFromPrimary(sqlQuery, ItemSchema);
-};
-
-const writeItemToDbs = async (
-  sqlQuery: QueryConfig
-): Promise<Item> => {
-  try {
-    return queryToBothDbs(sqlQuery, ItemSchema);
-  } catch (err) {
-    throw err;
-  }
-};
-
-export const getAllItems = async (shop_id: Number): Promise<Item[]> => {
-  return await getItemsFromPrimaryDb({
+export const getAllItems = async (shop_id: number): Promise<Item[]> => {
+  const sqlQuery = {
     text: `
       SELECT i.id,
         i.name,
@@ -36,11 +19,13 @@ export const getAllItems = async (shop_id: Number): Promise<Item[]> => {
       ORDER BY i.id;
     `,
     values: [shop_id],
-  });
+  };
+
+  return await queryFromPrimary(sqlQuery, ItemSchema);
 };
 
 export const insertItem = async (body: CreateItemInput): Promise<Item> => {
-  return await writeItemToDbs({
+  const sqlQuery = {
     text: `
       WITH inserted AS (
         INSERT INTO items (name, description, price, picture, status, category, shop_id)
@@ -68,7 +53,13 @@ export const insertItem = async (body: CreateItemInput): Promise<Item> => {
       body.category,
       body.shop_id
     ]
-  });
+  };
+
+  try {
+    return queryToBothDbs(sqlQuery, ItemSchema);
+  } catch (err) {
+    throw err;
+  }
 };
 
 export const updateItem = async (id: number, body: UpdateItemInput): Promise<Item> => {
@@ -107,7 +98,7 @@ export const updateItem = async (id: number, body: UpdateItemInput): Promise<Ite
 
   values.push(id);
 
-  return await writeItemToDbs({
+  const sqlQuery = {
     text: `
       WITH updated AS (
         UPDATE items
@@ -128,7 +119,13 @@ export const updateItem = async (id: number, body: UpdateItemInput): Promise<Ite
       JOIN categories c ON c.id = u.category;
     `,
     values
-  });
+  };
+
+  try {
+    return queryToBothDbs(sqlQuery, ItemSchema);
+  } catch (err) {
+    throw err;
+  }
 };
 
 export const deleteItem = async (id: number): Promise<ItemDeleted> => {
