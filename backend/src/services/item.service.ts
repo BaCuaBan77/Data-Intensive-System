@@ -1,6 +1,6 @@
 import { QueryConfig } from "pg";
 import { primaryDb, queryAndParse, queryToBothDbs } from "./database"
-import { CreateItemInput, ItemSchema, Item, UpdateItemInput } from "../schemas/item.schema";
+import { CreateItemInput, ItemSchema, Item, UpdateItemInput, ItemDeletedSchema, ItemDeleted } from "../schemas/item.schema";
 
 const getItemsFromPrimaryDb = async (
   sqlQuery: QueryConfig
@@ -32,9 +32,10 @@ export const getAllItems = async (shop_id: Number): Promise<Item[]> => {
         i.created_at
       FROM items i
       JOIN categories c ON c.id = i.category
-      WHERE i.shop_id = $1
+      WHERE i.shop_id = $1 AND deleted = false
+      ORDER BY i.id;
     `,
-    values: [`${shop_id}`],
+    values: [shop_id],
   });
 };
 
@@ -128,4 +129,22 @@ export const updateItem = async (id: number, body: UpdateItemInput): Promise<Ite
     `,
     values
   });
+};
+
+export const deleteItem = async (id: number): Promise<ItemDeleted> => {
+  const sqlQuery = {
+    text: `
+      UPDATE items
+      SET deleted = TRUE
+      WHERE id = $1
+      RETURNING id;
+    `,
+    values: [id]
+  };
+
+  try {
+    return queryToBothDbs(sqlQuery, ItemDeletedSchema);
+  } catch (err) {
+    throw err;
+  }
 };

@@ -71,7 +71,8 @@ CREATE TABLE items (
     status VARCHAR(50),
     category INT REFERENCES categories(id),
     shop_id INT REFERENCES shops(id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted BOOLEAN DEFAULT FALSE
 );
 
 -- TRANSACTIONS

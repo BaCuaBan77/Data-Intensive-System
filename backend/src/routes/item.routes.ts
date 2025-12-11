@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getItems, createItem, changeItem } from "../controllers/item.controller";
+import { getItems, createItem, changeItem, removeItem } from "../controllers/item.controller";
 
 const itemsRouter = Router();
 
@@ -114,10 +114,30 @@ const itemsRouter = Router();
  *         description: Item not found
  *       500:
  *         description: Failed to update the item
+ *   delete:
+ *     tags:
+ *       - Items
+ *     summary: Delete an item
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Item deleted
+ *       400:
+ *         description: Invalid ID or invalid body
+ *       404:
+ *         description: Item not found
+ *       500:
+ *         description: Failed to delete the item
  */
 itemsRouter
   .get("/", getItems)
   .post("/", createItem)
-  .patch("/:id", changeItem);
+  .patch("/:id", changeItem)
+  .delete("/:id", removeItem);
 
 export default itemsRouter;

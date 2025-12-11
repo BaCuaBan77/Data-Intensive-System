@@ -55,6 +55,12 @@ export const ItemFilterSchema = z.object({
 
 export type ItemFilter = z.infer<typeof ItemFilterSchema>;
 
+export const ItemDeletedSchema = z.object({
+  id: z.number().int(),
+});
+
+export type ItemDeleted = z.infer<typeof ItemDeletedSchema>;
+
 // PATCH /items/:id
 export const UpdateItemSchema = z.object({
   name: z.string()
