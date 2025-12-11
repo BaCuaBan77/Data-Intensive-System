@@ -29,3 +29,10 @@ export const SearchSchema = z.object({
 });
 
 export type SearchQuery = z.infer<typeof SearchSchema>;
+
+// GET /get-database-name?user_id=
+export const UserIdSchema = z.object({
+  user_id: z.coerce.number(),
+});
+
+export type UserId = z.infer<typeof UserIdSchema>;

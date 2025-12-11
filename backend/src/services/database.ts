@@ -9,6 +9,11 @@ const shardDb = new Pool({
   connectionString: process.env.SHARD_DATABASE_URL
 });
 
+//Sharding rule: User ID % 2 = 0 -> PRIMARY, User ID % 2 = 1 -> SHARD
+export const getDbByUserId = async (user_id: number): Promise<String> => {
+  return user_id % 2 === 0 ? "primaryDb" : "shardDb";
+};
+
 const queryAndParse = async <T>(
   db: Pool,
   sql: QueryConfig,
