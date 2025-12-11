@@ -26,9 +26,4 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(errorHandler);
 
-app.get("/", (_req: Request, res: Response) => {
-  // TEMP
-  res.send("Hello World!");
-});
-
 export default app;
