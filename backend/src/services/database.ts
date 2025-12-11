@@ -1,15 +1,15 @@
 import { ZodSchema } from "zod";
 import { Pool, QueryConfig } from "pg";
 
-export const primaryDb = new Pool({
+const primaryDb = new Pool({
   connectionString: process.env.PRIMARY_DATABASE_URL
 });
 
-export const shardDb = new Pool({
+const shardDb = new Pool({
   connectionString: process.env.SHARD_DATABASE_URL
 });
 
-export const queryAndParse = async <T>(
+const queryAndParse = async <T>(
   db: Pool,
   sql: QueryConfig,
   schema: ZodSchema<T>
@@ -22,6 +22,20 @@ export const queryAndParse = async <T>(
   const result = await db.query(safeQuery);
 
   return result.rows.map((row) => schema.parse(row));
+};
+
+export const queryFromPrimary = async <T>(
+  sql: QueryConfig,
+  schema: ZodSchema<T>
+): Promise<T[]> => {
+  return queryAndParse(primaryDb, sql, schema);
+};
+
+export const queryFromShard = async <T>(
+  sql: QueryConfig,
+  schema: ZodSchema<T>
+): Promise<T[]> => {
+  return queryAndParse(shardDb, sql, schema);
 };
 
 export const queryToBothDbs = async <T>(

@@ -1,5 +1,5 @@
 import { QueryConfig } from "pg";
-import { primaryDb, shardDb } from "./database"
+import { queryFromPrimary, queryFromShard } from "./database"
 import { UserSchema, User } from "../schemas/user.schema";
 
 const getUsersFromDbs = async (sqlQuery: QueryConfig): Promise<User[]> => {
@@ -7,13 +7,10 @@ const getUsersFromDbs = async (sqlQuery: QueryConfig): Promise<User[]> => {
     sqlQuery.values = [];
   }
 
-  const primaryUsers = await primaryDb.query(sqlQuery);
-  const shardUsers = await shardDb.query(sqlQuery);
+  const primaryUsers = await queryFromPrimary(sqlQuery, UserSchema);
+  const shardUsers = await queryFromShard(sqlQuery, UserSchema);
 
-  const primaryUsersParsed = primaryUsers.rows.map((u) => UserSchema.parse(u));
-  const shardUsersParsed = shardUsers.rows.map((u) => UserSchema.parse(u));
-
-  return [...primaryUsersParsed, ...shardUsersParsed].sort((a, b) => a.id - b.id);
+  return [...primaryUsers, ...shardUsers].sort((a, b) => a.id - b.id);
 };
 
 export const findUsers = async ({

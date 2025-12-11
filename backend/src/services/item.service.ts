@@ -1,11 +1,11 @@
 import { QueryConfig } from "pg";
-import { primaryDb, queryAndParse, queryToBothDbs } from "./database"
+import { queryFromPrimary, queryToBothDbs } from "./database"
 import { CreateItemInput, ItemSchema, Item, UpdateItemInput, ItemDeletedSchema, ItemDeleted } from "../schemas/item.schema";
 
 const getItemsFromPrimaryDb = async (
   sqlQuery: QueryConfig
 ): Promise<Item[]> => {
-  return queryAndParse(primaryDb, sqlQuery, ItemSchema);
+  return queryFromPrimary(sqlQuery, ItemSchema);
 };
 
 const writeItemToDbs = async (
