@@ -44,7 +44,19 @@ export const findUsers = async ({
   }
 
   const sql = `
-    SELECT * FROM users
+    SELECT id,
+      email,
+      full_name,
+      role,
+      match_wins,
+      match_losses,
+      match_ties,
+      total_matches,      
+      status,
+      currency_balance,
+      purchased_items,
+      rating
+    FROM users
     ${where.length ? "WHERE " + where.join(" AND ") : ""};
   `;
 
