@@ -45,7 +45,7 @@ export const findUsers = async ({
 
   const sql = `
     SELECT * FROM users
-    ${where.length ? "WHERE " + where.join(" AND ") : ""}
+    ${where.length ? "WHERE " + where.join(" AND ") : ""};
   `;
 
   return await getUsersFromDbs({

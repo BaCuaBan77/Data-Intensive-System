@@ -11,7 +11,7 @@ export const getCategoriesFromPrimaryDb = async (
 export const getAllCategories = async (): Promise<Category[]> => {
   // Get only from Primary DB as data is identical in both
   return await getCategoriesFromPrimaryDb({
-    text: `SELECT * FROM categories`,
+    text: `SELECT * FROM categories;`,
     values: [],
   });
 };

@@ -11,7 +11,7 @@ export const getShopsFromPrimaryDb = async (
 export const getAllShops = async (): Promise<Shop[]> => {
   // Get only from Primary DB as shops are identical in both
   return await getShopsFromPrimaryDb({
-    text: `SELECT * FROM shops`,
+    text: `SELECT * FROM shops;`,
     values: [],
   });
 };
