@@ -2,14 +2,31 @@ import { z } from "zod";
 
 // POST /items
 export const CreateItemSchema = z.object({
-  name: z.string().min(1),
-  description: z.string(),
-  price: z.coerce.number(),
-  picture: z.string().optional(),
-  status: z.string(),
+  name: z.string()
+    .min(1)
+    .max(255),
 
-  category: z.number().int(),
-  shop_id: z.number().int(),
+  description: z.string()
+    .max(255),
+
+  price: z.coerce.number()
+    .min(0),
+
+  picture: z.string()
+    .max(255)
+    .optional(),
+
+  status: z.enum(["available", "not_available"]),
+
+  category: z.number()
+    .int()
+    .min(1)
+    .max(30),
+
+  shop_id: z.number()
+    .int()  
+    .min(1)
+    .max(2),
 });
 
 export type CreateItemInput = z.infer<typeof CreateItemSchema>;
@@ -38,16 +55,44 @@ export const ItemFilterSchema = z.object({
 
 export type ItemFilter = z.infer<typeof ItemFilterSchema>;
 
+export const ItemDeletedSchema = z.object({
+  id: z.number().int(),
+});
+
+export type ItemDeleted = z.infer<typeof ItemDeletedSchema>;
+
 // PATCH /items/:id
 export const UpdateItemSchema = z.object({
-  name: z.string().optional(),
-  description: z.string().optional(),
-  price: z.coerce.number().optional(),
-  picture: z.string().optional(),
-  status: z.string().optional(),
+  name: z.string()
+    .min(1)
+    .max(255)
+    .optional(),
 
-  category: z.number().int().optional(),
-  shop_id: z.number().int().optional(),
+  description: z.string()
+    .max(255)
+    .optional(),
+
+  price: z.coerce.number()
+    .min(0)
+    .optional(),
+
+  picture: z.string()
+    .max(255)
+    .optional(),
+
+  status: z.enum(["available", "not_available"]).optional(),
+
+  category: z.number()
+    .int()
+    .min(1)
+    .max(30)
+    .optional(),
+
+  shop_id: z.number()
+    .int()  
+    .min(1)
+    .max(2)
+    .optional(),
 });
 
 export type UpdateItemInput = z.infer<typeof UpdateItemSchema>;

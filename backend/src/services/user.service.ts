@@ -1,5 +1,5 @@
 import { QueryConfig } from "pg";
-import { primaryDb, shardDb } from "./database"
+import { queryFromPrimary, queryFromShard } from "./database"
 import { UserSchema, User } from "../schemas/user.schema";
 
 const getUsersFromDbs = async (sqlQuery: QueryConfig): Promise<User[]> => {
@@ -7,13 +7,10 @@ const getUsersFromDbs = async (sqlQuery: QueryConfig): Promise<User[]> => {
     sqlQuery.values = [];
   }
 
-  const primaryUsers = await primaryDb.query(sqlQuery);
-  const shardUsers = await shardDb.query(sqlQuery);
+  const primaryUsers = await queryFromPrimary(sqlQuery, UserSchema);
+  const shardUsers = await queryFromShard(sqlQuery, UserSchema);
 
-  const primaryUsersParsed = primaryUsers.rows.map((u) => UserSchema.parse({ ...u, source: "primary" }));
-  const shardUsersParsed = shardUsers.rows.map((u) => UserSchema.parse({ ...u, source: "shard" }));
-
-  return [...primaryUsersParsed, ...shardUsersParsed];
+  return [...primaryUsers, ...shardUsers].sort((a, b) => a.id - b.id);
 };
 
 export const findUsers = async ({
@@ -44,8 +41,20 @@ export const findUsers = async ({
   }
 
   const sql = `
-    SELECT * FROM users
-    ${where.length ? "WHERE " + where.join(" AND ") : ""}
+    SELECT id,
+      email,
+      full_name,
+      role,
+      match_wins,
+      match_losses,
+      match_ties,
+      total_matches,      
+      status,
+      currency_balance,
+      purchased_items,
+      rating
+    FROM users
+    ${where.length ? "WHERE " + where.join(" AND ") : ""};
   `;
 
   return await getUsersFromDbs({
