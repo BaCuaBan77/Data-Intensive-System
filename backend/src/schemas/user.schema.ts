@@ -21,7 +21,7 @@ export const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>;
 
-// GET /users?email=
+// GET /users?email=&status=&role=
 export const SearchSchema = z.object({
   email: z.coerce.string().trim().optional(),
   status: z.coerce.string().trim().optional(),

@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import { swaggerUi, swaggerSpec } from "./swagger";
 import { errorHandler } from "./utils/middleware";
 import cors from "cors";

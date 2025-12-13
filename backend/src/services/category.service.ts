@@ -2,7 +2,7 @@ import { queryFromPrimary } from "./database"
 import { CategorySchema, Category } from "../schemas/category.schema";
 
 export const getAllCategories = async (): Promise<Category[]> => {
-  // Get only from Primary DB as data is identical in both
+  // Get data only from Primary DB as it is identical in both
   const sqlQuery = {
     text: `SELECT * FROM categories;`,
     values: [],

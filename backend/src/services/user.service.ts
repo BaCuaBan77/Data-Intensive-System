@@ -3,6 +3,7 @@ import { queryFromPrimary, queryFromShard } from "./database"
 import { UserSchema, User } from "../schemas/user.schema";
 
 const getUsersFromDbs = async (sqlQuery: QueryConfig): Promise<User[]> => {
+  // Get data from both databases and merge
   if (sqlQuery.values === null) {
     sqlQuery.values = [];
   }
@@ -25,16 +26,19 @@ export const findUsers = async ({
   const where: string[] = [];
   const values: any[] = [];
 
+  // Filter by role
   if (role) {
     values.push(role);
     where.push(`role = $${values.length}`);
   }
 
+  // Filter by status
   if (status) {
     values.push(status);
     where.push(`status = $${values.length}`);
   }
 
+  // Filter by email
   if (email) {
     values.push(`%${email}%`);
     where.push(`email ILIKE $${values.length}`);
