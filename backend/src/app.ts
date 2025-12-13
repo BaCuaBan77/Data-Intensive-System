@@ -6,6 +6,7 @@ import usersRouter from "./routes/user.routes";
 import itemsRouter from "./routes/item.routes";
 import shopsRouter from "./routes/shop.routes";
 import utilsRouter from "./routes/utils.routes";
+import matchRouter from "./routes/match.routes";
 import categoriesRouter from "./routes/category.routes";
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use("/api/users", usersRouter);
 app.use("/api/items", itemsRouter);
 app.use("/api/shops", shopsRouter);
+app.use("/api/matches", matchRouter);
 app.use("/api/categories", categoriesRouter);
 
 app.use("/api", utilsRouter);

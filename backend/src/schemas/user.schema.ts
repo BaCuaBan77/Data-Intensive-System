@@ -36,3 +36,11 @@ export const UserIdSchema = z.object({
 });
 
 export type UserId = z.infer<typeof UserIdSchema>;
+
+// User info for matches
+export const UserInfoSchema = z.object({
+  id: z.number().int(),
+  full_name: z.string(),
+});
+
+export type UserInfo = z.infer<typeof UserInfoSchema>;
