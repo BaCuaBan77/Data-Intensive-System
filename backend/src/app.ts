@@ -8,6 +8,7 @@ import shopsRouter from "./routes/shop.routes";
 import utilsRouter from "./routes/utils.routes";
 import matchRouter from "./routes/match.routes";
 import categoriesRouter from "./routes/category.routes";
+import transactionRouter from "./routes/transaction.routes";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/api/items", itemsRouter);
 app.use("/api/shops", shopsRouter);
 app.use("/api/matches", matchRouter);
 app.use("/api/categories", categoriesRouter);
+app.use("/api/transactions", transactionRouter);
 
 app.use("/api", utilsRouter);
 
