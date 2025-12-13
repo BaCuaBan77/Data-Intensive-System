@@ -1,18 +1,5 @@
-import { QueryConfig } from "pg";
-import { queryFromPrimary, queryFromShard } from "./database"
+import { queryFromBothDbs } from "./database"
 import { UserSchema, User } from "../schemas/user.schema";
-
-const getUsersFromDbs = async (sqlQuery: QueryConfig): Promise<User[]> => {
-  // Get data from both databases and merge
-  if (sqlQuery.values === null) {
-    sqlQuery.values = [];
-  }
-
-  const primaryUsers = await queryFromPrimary(sqlQuery, UserSchema);
-  const shardUsers = await queryFromShard(sqlQuery, UserSchema);
-
-  return [...primaryUsers, ...shardUsers].sort((a, b) => a.id - b.id);
-};
 
 export const findUsers = async ({
   email,
@@ -61,8 +48,8 @@ export const findUsers = async ({
     ${where.length ? "WHERE " + where.join(" AND ") : ""};
   `;
 
-  return await getUsersFromDbs({
+  return await queryFromBothDbs({
     text: sql,
     values,
-  });
+  }, UserSchema);
 };

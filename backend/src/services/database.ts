@@ -43,6 +43,21 @@ export const queryFromShard = async <T>(
   return queryAndParse(shardDb, sql, schema);
 };
 
+export const queryFromBothDbs = async <T extends { id: number }>(
+  sql: QueryConfig,
+  schema: ZodSchema<T>
+): Promise<T[]> => {
+  // Get data from both databases and merge
+  if (sql.values === null) {
+    sql.values = [];
+  }
+
+  const primaryData = await queryFromPrimary(sql, schema);
+  const shardData = await queryFromShard(sql, schema);
+
+  return [...primaryData, ...shardData].sort((a, b) => a.id - b.id);
+};
+
 export const queryToBothDbs = async <T>(
   sql: QueryConfig,
   schema: ZodSchema<T>
