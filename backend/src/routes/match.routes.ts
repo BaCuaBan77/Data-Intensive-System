@@ -13,6 +13,8 @@ const matchRouter = Router();
  *     responses:
  *       200:
  *         description: Returns all matches
+ *       500:
+ *         description: Failed to load matches
  */
 matchRouter.get("/", getMatches);
 

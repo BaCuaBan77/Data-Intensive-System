@@ -33,6 +33,8 @@ const usersRouter = Router();
  *     responses:
  *       200:
  *         description: Returns all users
+ *       500:
+ *         description: Failed to load users
  */
 usersRouter.get("/", getUsers);
 
