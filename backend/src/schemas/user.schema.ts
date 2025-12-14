@@ -17,6 +17,7 @@ export const UserSchema = z.object({
   currency_balance: z.coerce.number(),
   purchased_items: z.any(),
   rating: z.number(),
+  banned: z.boolean(),
 });
 
 export type User = z.infer<typeof UserSchema>;
