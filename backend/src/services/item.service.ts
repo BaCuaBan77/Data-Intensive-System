@@ -58,7 +58,7 @@ export const insertItem = async (body: CreateItemInput): Promise<Item> => {
 
   // Insert to Primary and Shard in one transaction
   try {
-    return queryToBothDbs(sqlQuery, ItemSchema);
+    return await queryToBothDbs(sqlQuery, ItemSchema);
   } catch (err) {
     throw err;
   }
@@ -125,7 +125,7 @@ export const updateItem = async (id: number, body: UpdateItemInput): Promise<Ite
 
   // Update to Primary and Shard in one transaction
   try {
-    return queryToBothDbs(sqlQuery, ItemSchema);
+    return await queryToBothDbs(sqlQuery, ItemSchema);
   } catch (err) {
     throw err;
   }
@@ -144,7 +144,7 @@ export const deleteItem = async (id: number): Promise<ItemDeleted> => {
 
   // Update to Primary and Shard in one transaction
   try {
-    return queryToBothDbs(sqlQuery, ItemDeletedSchema);
+    return await queryToBothDbs(sqlQuery, ItemDeletedSchema);
   } catch (err) {
     throw err;
   }

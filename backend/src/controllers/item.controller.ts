@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { getAllItems, insertItem, updateItem, deleteItem } from "../services/item.service";
-import { ItemFilterSchema } from "../schemas/item.schema";
-import { CreateItemSchema, UpdateItemSchema } from "../schemas/item.schema";
+import { ItemFilterSchema, CreateItemSchema, UpdateItemSchema } from "../schemas/item.schema";
 
 export const getItems = async (request: Request, response: Response, next: NextFunction) => {
   try {

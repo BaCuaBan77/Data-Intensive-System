@@ -13,7 +13,7 @@ const shardDb = new Pool({
 });
 
 // Sharding rule: User ID % 2 = 0 -> PRIMARY, User ID % 2 = 1 -> SHARD
-export const getDbByUserId = async (user_id: number): Promise<String> => {
+export const getDbByUserId = (user_id: number): string => {
   return user_id % 2 === 0 ? PRIMARY_DB : SHARD_DB;
 };
 
@@ -36,14 +36,14 @@ export const queryPrimary = async <T>(
   sql: QueryConfig,
   schema: ZodSchema<T>
 ): Promise<T[]> => {
-  return queryAndParse(primaryDb, sql, schema);
+  return await queryAndParse(primaryDb, sql, schema);
 };
 
 export const queryShard = async <T>(
   sql: QueryConfig,
   schema: ZodSchema<T>
 ): Promise<T[]> => {
-  return queryAndParse(shardDb, sql, schema);
+  return await queryAndParse(shardDb, sql, schema);
 };
 
 // Used for the cases when data is different in databases and has to be inserted only to one database
