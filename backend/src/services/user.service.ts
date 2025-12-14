@@ -32,7 +32,7 @@ export const findUsers = async ({
   }
 
   // Adding banned = true only if the latest added ban
-  // has start_time less than now and is endless and
+  // has start_time less than now and is endless or
   // has start_time less than now and end_time more than now
   const sql = `
     SELECT
