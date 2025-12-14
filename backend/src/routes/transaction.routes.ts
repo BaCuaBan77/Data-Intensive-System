@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { getTransactions } from "../controllers/transaction.controller";
 
-const transactionRouter = Router();
+const transactionsRouter = Router();
 
 /**
  * @openapi
@@ -16,6 +16,6 @@ const transactionRouter = Router();
  *       500:
  *         description: Failed to load transactions
  */
-transactionRouter.get("/", getTransactions);
+transactionsRouter.get("/", getTransactions);
 
-export default transactionRouter;
+export default transactionsRouter;

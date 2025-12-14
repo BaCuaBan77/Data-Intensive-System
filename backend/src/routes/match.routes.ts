@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { getMatches } from "../controllers/match.controller";
 
-const matchRouter = Router();
+const matchesRouter = Router();
 
 /**
  * @openapi
@@ -16,6 +16,6 @@ const matchRouter = Router();
  *       500:
  *         description: Failed to load matches
  */
-matchRouter.get("/", getMatches);
+matchesRouter.get("/", getMatches);
 
-export default matchRouter;
+export default matchesRouter;
