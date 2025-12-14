@@ -2,6 +2,7 @@ import express from "express";
 import { swaggerUi, swaggerSpec } from "./swagger";
 import { errorHandler } from "./utils/middleware";
 import cors from "cors";
+import bansRouter from "./routes/ban.routes";
 import usersRouter from "./routes/user.routes";
 import itemsRouter from "./routes/item.routes";
 import shopsRouter from "./routes/shop.routes";
@@ -17,6 +18,7 @@ app.use(cors());
 
 app.use(express.json());
 
+app.use("/api/bans", bansRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/items", itemsRouter);
 app.use("/api/shops", shopsRouter);
