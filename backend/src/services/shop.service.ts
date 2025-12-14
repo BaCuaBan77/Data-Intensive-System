@@ -1,4 +1,4 @@
-import { queryFromPrimary } from "./database"
+import { queryPrimary } from "./database"
 import { ShopSchema, Shop } from "../schemas/shop.schema";
 
 export const getAllShops = async (): Promise<Shop[]> => {
@@ -8,5 +8,5 @@ export const getAllShops = async (): Promise<Shop[]> => {
     values: [],
   };
 
-  return await queryFromPrimary(sqlQuery, ShopSchema);
+  return await queryPrimary(sqlQuery, ShopSchema);
 };

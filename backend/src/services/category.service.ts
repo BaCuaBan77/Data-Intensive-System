@@ -1,4 +1,4 @@
-import { queryFromPrimary } from "./database"
+import { queryPrimary } from "./database"
 import { CategorySchema, Category } from "../schemas/category.schema";
 
 export const getAllCategories = async (): Promise<Category[]> => {
@@ -8,5 +8,5 @@ export const getAllCategories = async (): Promise<Category[]> => {
     values: [],
   };
 
-  return await queryFromPrimary(sqlQuery, CategorySchema);
+  return await queryPrimary(sqlQuery, CategorySchema);
 };
