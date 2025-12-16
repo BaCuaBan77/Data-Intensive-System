@@ -169,36 +169,36 @@ INSERT INTO categories (title, description) VALUES
 -- Insert 30 matches (only referencing SHARD users with odd IDs: 1, 3, 5, ...)
 -- Matches table on shard only has odd IDs
 INSERT INTO matches (id, moves, result, player_white, player_black, winner, start_time, end_time, used_skins, rating_change_white, rating_change_black) VALUES
-(1, '["e4", "e5", "Nf3", "Nc6", "Bb5"]'::jsonb, 'white_wins', 1, 3, 1, '2024-02-10 08:00:00', '2024-02-10 08:50:00', '["pro_white", "pro_black"]'::jsonb, 22.3, -22.3),
-(3, '["d4", "d5", "c4", "dxc4", "e4"]'::jsonb, 'black_wins', 5, 7, 7, '2024-02-10 09:00:00', '2024-02-10 09:55:00', '["master_white", "master_black"]'::jsonb, -24.1, 24.1),
-(5, '["Nf3", "d5", "d4", "Nf6", "c4"]'::jsonb, 'draw', 9, 11, NULL, '2024-02-10 10:00:00', '2024-02-10 10:58:00', '["champion_white", "champion_black"]'::jsonb, 0.0, 0.0),
-(7, '["e4", "c5", "Nf3", "d6", "d4", "cxd4"]'::jsonb, 'white_wins', 13, 15, 13, '2024-02-10 11:00:00', '2024-02-10 11:43:00', '["elite_white", "elite_black"]'::jsonb, 19.7, -19.7),
-(9, '["d4", "Nf6", "c4", "e6", "Nc3"]'::jsonb, 'black_wins', 17, 19, 19, '2024-02-10 12:00:00', '2024-02-10 12:51:00', '["pro_white", "pro_black"]'::jsonb, -21.5, 21.5),
-(11, '["e4", "e6", "d4", "d5", "Nd2", "Nf6"]'::jsonb, 'white_wins', 21, 23, 21, '2024-02-10 13:00:00', '2024-02-10 13:45:00', '["master_white", "master_black"]'::jsonb, 18.4, -18.4),
-(13, '["Nf3", "c5", "c4", "Nc6", "e3"]'::jsonb, 'draw', 25, 27, NULL, '2024-02-10 14:00:00', '2024-02-10 14:59:00', '["champion_white", "champion_black"]'::jsonb, 0.0, 0.0),
-(15, '["d4", "d5", "Nf3", "Nf6", "c4", "e6"]'::jsonb, 'black_wins', 29, 31, 31, '2024-02-10 15:00:00', '2024-02-10 15:48:00', '["elite_white", "elite_black"]'::jsonb, -23.2, 23.2),
-(17, '["e4", "e5", "Bc4", "Nc6", "Qf3", "Nf6"]'::jsonb, 'white_wins', 33, 35, 33, '2024-02-10 16:00:00', '2024-02-10 16:41:00', '["pro_white", "pro_black"]'::jsonb, 17.6, -17.6),
-(19, '["c4", "e5", "Nc3", "Nf6", "Nf3", "Nc6"]'::jsonb, 'white_wins', 37, 39, 37, '2024-02-10 17:00:00', '2024-02-10 17:47:00', '["master_white", "master_black"]'::jsonb, 16.8, -16.8),
-(21, '["d4", "Nf6", "Nf3", "g6", "c4", "Bg7"]'::jsonb, 'black_wins', 41, 43, 43, '2024-02-11 08:00:00', '2024-02-11 08:52:00', '["champion_white", "champion_black"]'::jsonb, -20.9, 20.9),
-(23, '["e4", "c6", "d4", "d5", "exd5", "cxd5"]'::jsonb, 'white_wins', 45, 47, 45, '2024-02-11 09:00:00', '2024-02-11 09:44:00', '["elite_white", "elite_black"]'::jsonb, 15.3, -15.3),
-(25, '["Nf3", "d5", "d4", "c6", "c4", "e6"]'::jsonb, 'draw', 49, 51, NULL, '2024-02-11 10:00:00', '2024-02-11 10:57:00', '["pro_white", "pro_black"]'::jsonb, 0.0, 0.0),
-(27, '["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4"]'::jsonb, 'white_wins', 53, 55, 53, '2024-02-11 11:00:00', '2024-02-11 11:42:00', '["master_white", "master_black"]'::jsonb, 14.5, -14.5),
-(29, '["d4", "d5", "c4", "e6", "Nc3", "Nf6"]'::jsonb, 'black_wins', 57, 59, 59, '2024-02-11 12:00:00', '2024-02-11 12:49:00', '["champion_white", "champion_black"]'::jsonb, -22.7, 22.7),
-(31, '["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5", "b4"]'::jsonb, 'white_wins', 1, 5, 1, '2024-02-11 13:00:00', '2024-02-11 13:46:00', '["elite_white", "elite_black"]'::jsonb, 21.8, -21.8),
-(33, '["d4", "Nf6", "c4", "g6", "Nc3", "Bg7"]'::jsonb, 'black_wins', 9, 13, 13, '2024-02-11 14:00:00', '2024-02-11 14:53:00', '["pro_white", "pro_black"]'::jsonb, -19.6, 19.6),
-(35, '["Nf3", "c5", "e4", "Nc6", "d4", "cxd4"]'::jsonb, 'draw', 17, 21, NULL, '2024-02-11 15:00:00', '2024-02-11 15:56:00', '["master_white", "master_black"]'::jsonb, 0.0, 0.0),
-(37, '["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4"]'::jsonb, 'white_wins', 25, 29, 25, '2024-02-11 16:00:00', '2024-02-11 16:40:00', '["champion_white", "champion_black"]'::jsonb, 13.2, -13.2),
-(39, '["d4", "d5", "Nf3", "Nf6", "c4", "e6", "Nc3"]'::jsonb, 'white_wins', 33, 37, 33, '2024-02-11 17:00:00', '2024-02-11 17:48:00', '["elite_white", "elite_black"]'::jsonb, 11.9, -11.9),
-(41, '["e4", "e6", "d4", "d5", "Nd2", "Nf6", "e5"]'::jsonb, 'black_wins', 41, 45, 45, '2024-02-12 08:00:00', '2024-02-12 08:54:00', '["pro_white", "pro_black"]'::jsonb, -18.1, 18.1),
-(43, '["Nf3", "d5", "d4", "c6", "c4", "e6", "e3"]'::jsonb, 'white_wins', 49, 53, 49, '2024-02-12 09:00:00', '2024-02-12 09:43:00', '["master_white", "master_black"]'::jsonb, 10.7, -10.7),
-(45, '["e4", "e5", "Bc4", "Nc6", "Qf3", "Nf6", "Nc3"]'::jsonb, 'draw', 57, 1, NULL, '2024-02-12 10:00:00', '2024-02-12 10:55:00', '["champion_white", "champion_black"]'::jsonb, 0.0, 0.0),
-(47, '["c4", "e5", "Nc3", "Nf6", "Nf3", "Nc6", "d4"]'::jsonb, 'white_wins', 3, 7, 3, '2024-02-12 11:00:00', '2024-02-12 11:39:00', '["elite_white", "elite_black"]'::jsonb, 25.4, -25.4),
-(49, '["d4", "Nf6", "Nf3", "g6", "c4", "Bg7", "Nc3"]'::jsonb, 'black_wins', 11, 15, 15, '2024-02-12 12:00:00', '2024-02-12 12:50:00', '["pro_white", "pro_black"]'::jsonb, -17.3, 17.3),
-(51, '["e4", "c6", "d4", "d5", "exd5", "cxd5", "c4"]'::jsonb, 'white_wins', 19, 23, 19, '2024-02-12 13:00:00', '2024-02-12 13:44:00', '["master_white", "master_black"]'::jsonb, 9.8, -9.8),
-(53, '["Nf3", "d5", "d4", "c6", "e3", "Nf6"]'::jsonb, 'draw', 27, 31, NULL, '2024-02-12 14:00:00', '2024-02-12 14:58:00', '["champion_white", "champion_black"]'::jsonb, 0.0, 0.0),
-(55, '["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "Nf6"]'::jsonb, 'white_wins', 35, 39, 35, '2024-02-12 15:00:00', '2024-02-12 15:41:00', '["elite_white", "elite_black"]'::jsonb, 8.4, -8.4),
-(57, '["d4", "d5", "c4", "e6", "Nc3", "Nf6", "cxd5"]'::jsonb, 'black_wins', 43, 47, 47, '2024-02-12 16:00:00', '2024-02-12 16:51:00', '["pro_white", "pro_black"]'::jsonb, -16.2, 16.2),
-(59, '["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4", "Nf6"]'::jsonb, 'white_wins', 51, 55, 51, '2024-02-12 17:00:00', '2024-02-12 17:45:00', '["master_white", "master_black"]'::jsonb, 7.1, -7.1);
+(1, '["e4", "e5", "Nf3", "Nc6", "Bb5"]'::jsonb, 'white_wins', 1, 3, 1, '2025-11-02 08:00:00', '2025-11-02 08:50:00', '["pro_white", "pro_black"]'::jsonb, 22.3, -22.3),
+(3, '["d4", "d5", "c4", "dxc4", "e4"]'::jsonb, 'black_wins', 5, 7, 7, '2025-11-03 09:00:00', '2025-11-03 09:55:00', '["master_white", "master_black"]'::jsonb, -24.1, 24.1),
+(5, '["Nf3", "d5", "d4", "Nf6", "c4"]'::jsonb, 'draw', 9, 11, NULL, '2025-11-30 10:00:00', '2025-11-30 10:58:00', '["champion_white", "champion_black"]'::jsonb, 0.0, 0.0),
+(7, '["e4", "c5", "Nf3", "d6", "d4", "cxd4"]'::jsonb, 'white_wins', 13, 15, 13, '2025-12-10 11:00:00', '2025-12-10 11:43:00', '["elite_white", "elite_black"]'::jsonb, 19.7, -19.7),
+(9, '["d4", "Nf6", "c4", "e6", "Nc3"]'::jsonb, 'black_wins', 17, 19, 19, '2025-12-10 12:00:00', '2025-12-10 12:51:00', '["pro_white", "pro_black"]'::jsonb, -21.5, 21.5),
+(11, '["e4", "e6", "d4", "d5", "Nd2", "Nf6"]'::jsonb, 'white_wins', 21, 23, 21, '2025-12-10 13:00:00', '2025-12-10 13:45:00', '["master_white", "master_black"]'::jsonb, 18.4, -18.4),
+(13, '["Nf3", "c5", "c4", "Nc6", "e3"]'::jsonb, 'draw', 25, 27, NULL, '2025-12-10 14:00:00', '2025-12-10 14:59:00', '["champion_white", "champion_black"]'::jsonb, 0.0, 0.0),
+(15, '["d4", "d5", "Nf3", "Nf6", "c4", "e6"]'::jsonb, 'black_wins', 29, 31, 31, '2025-12-10 15:00:00', '2025-12-10 15:48:00', '["elite_white", "elite_black"]'::jsonb, -23.2, 23.2),
+(17, '["e4", "e5", "Bc4", "Nc6", "Qf3", "Nf6"]'::jsonb, 'white_wins', 33, 35, 33, '2025-12-10 16:00:00', '2025-12-10 16:41:00', '["pro_white", "pro_black"]'::jsonb, 17.6, -17.6),
+(19, '["c4", "e5", "Nc3", "Nf6", "Nf3", "Nc6"]'::jsonb, 'white_wins', 37, 39, 37, '2025-12-10 17:00:00', '2025-12-10 17:47:00', '["master_white", "master_black"]'::jsonb, 16.8, -16.8),
+(21, '["d4", "Nf6", "Nf3", "g6", "c4", "Bg7"]'::jsonb, 'black_wins', 41, 43, 43, '2025-12-11 08:00:00', '2025-12-11 08:52:00', '["champion_white", "champion_black"]'::jsonb, -20.9, 20.9),
+(23, '["e4", "c6", "d4", "d5", "exd5", "cxd5"]'::jsonb, 'white_wins', 45, 47, 45, '2025-12-11 09:00:00', '2025-12-11 09:44:00', '["elite_white", "elite_black"]'::jsonb, 15.3, -15.3),
+(25, '["Nf3", "d5", "d4", "c6", "c4", "e6"]'::jsonb, 'draw', 49, 51, NULL, '2025-12-11 10:00:00', '2025-12-11 10:57:00', '["pro_white", "pro_black"]'::jsonb, 0.0, 0.0),
+(27, '["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4"]'::jsonb, 'white_wins', 53, 55, 53, '2025-12-11 11:00:00', '2025-12-11 11:42:00', '["master_white", "master_black"]'::jsonb, 14.5, -14.5),
+(29, '["d4", "d5", "c4", "e6", "Nc3", "Nf6"]'::jsonb, 'black_wins', 57, 59, 59, '2025-12-11 12:00:00', '2025-12-11 12:49:00', '["champion_white", "champion_black"]'::jsonb, -22.7, 22.7),
+(31, '["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5", "b4"]'::jsonb, 'white_wins', 1, 5, 1, '2025-12-11 13:00:00', '2025-12-11 13:46:00', '["elite_white", "elite_black"]'::jsonb, 21.8, -21.8),
+(33, '["d4", "Nf6", "c4", "g6", "Nc3", "Bg7"]'::jsonb, 'black_wins', 9, 13, 13, '2025-12-11 14:00:00', '2025-12-11 14:53:00', '["pro_white", "pro_black"]'::jsonb, -19.6, 19.6),
+(35, '["Nf3", "c5", "e4", "Nc6", "d4", "cxd4"]'::jsonb, 'draw', 17, 21, NULL, '2025-12-11 15:00:00', '2025-12-11 15:56:00', '["master_white", "master_black"]'::jsonb, 0.0, 0.0),
+(37, '["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4"]'::jsonb, 'white_wins', 25, 29, 25, '2025-12-11 16:00:00', '2025-12-11 16:40:00', '["champion_white", "champion_black"]'::jsonb, 13.2, -13.2),
+(39, '["d4", "d5", "Nf3", "Nf6", "c4", "e6", "Nc3"]'::jsonb, 'white_wins', 33, 37, 33, '2025-12-11 17:00:00', '2025-12-11 17:48:00', '["elite_white", "elite_black"]'::jsonb, 11.9, -11.9),
+(41, '["e4", "e6", "d4", "d5", "Nd2", "Nf6", "e5"]'::jsonb, 'black_wins', 41, 45, 45, '2025-12-12 08:00:00', '2025-12-12 08:54:00', '["pro_white", "pro_black"]'::jsonb, -18.1, 18.1),
+(43, '["Nf3", "d5", "d4", "c6", "c4", "e6", "e3"]'::jsonb, 'white_wins', 49, 53, 49, '2025-12-12 09:00:00', '2025-12-12 09:43:00', '["master_white", "master_black"]'::jsonb, 10.7, -10.7),
+(45, '["e4", "e5", "Bc4", "Nc6", "Qf3", "Nf6", "Nc3"]'::jsonb, 'draw', 57, 1, NULL, '2025-12-12 10:00:00', '2025-12-12 10:55:00', '["champion_white", "champion_black"]'::jsonb, 0.0, 0.0),
+(47, '["c4", "e5", "Nc3", "Nf6", "Nf3", "Nc6", "d4"]'::jsonb, 'white_wins', 3, 7, 3, '2025-12-12 11:00:00', '2025-12-12 11:39:00', '["elite_white", "elite_black"]'::jsonb, 25.4, -25.4),
+(49, '["d4", "Nf6", "Nf3", "g6", "c4", "Bg7", "Nc3"]'::jsonb, 'black_wins', 11, 15, 15, '2025-12-12 12:00:00', '2025-12-12 12:50:00', '["pro_white", "pro_black"]'::jsonb, -17.3, 17.3),
+(51, '["e4", "c6", "d4", "d5", "exd5", "cxd5", "c4"]'::jsonb, 'white_wins', 19, 23, 19, '2025-12-12 13:00:00', '2025-12-12 13:44:00', '["master_white", "master_black"]'::jsonb, 9.8, -9.8),
+(53, '["Nf3", "d5", "d4", "c6", "e3", "Nf6"]'::jsonb, 'draw', 27, 31, NULL, '2025-12-12 14:00:00', '2025-12-12 14:58:00', '["champion_white", "champion_black"]'::jsonb, 0.0, 0.0),
+(55, '["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "Nf6"]'::jsonb, 'white_wins', 35, 39, 35, '2025-12-12 15:00:00', '2025-12-12 15:41:00', '["elite_white", "elite_black"]'::jsonb, 8.4, -8.4),
+(57, '["d4", "d5", "c4", "e6", "Nc3", "Nf6", "cxd5"]'::jsonb, 'black_wins', 43, 47, 47, '2025-12-12 16:00:00', '2025-12-12 16:51:00', '["pro_white", "pro_black"]'::jsonb, -16.2, 16.2),
+(59, '["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4", "Nf6"]'::jsonb, 'white_wins', 51, 55, 51, '2025-12-12 17:00:00', '2025-12-12 17:45:00', '["master_white", "master_black"]'::jsonb, 7.1, -7.1);
 
 -- Insert 30 items
 INSERT INTO items (name, description, price, picture, status, category, shop_id) VALUES
@@ -266,3 +266,10 @@ INSERT INTO transactions (id, player_id, purchased_item_id, price, currency, pay
 (55, 55, 28, 599.99, 2, 2028, '2024-02-08 11:45:00'),
 (57, 57, 29, 195.99, 1, 2029, '2024-02-08 13:00:00'),
 (59, 59, 30, 325.00, 2, 2030, '2024-02-08 14:15:00');
+
+-- Index for the metrics
+CREATE INDEX idx_matches_start_time
+ON matches (start_time);
+
+CREATE INDEX idx_matches_players
+ON matches (player_white, player_black);
