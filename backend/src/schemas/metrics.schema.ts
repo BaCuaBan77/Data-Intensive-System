@@ -47,3 +47,11 @@ export const DailyMatchesStatSchema = z.object({
 });
 
 export type DailyMatchesStat = z.infer<typeof DailyMatchesStatSchema>;
+
+export const DailySalesStatSchema = z.object({
+  day: z.date(),
+  sales_count: z.number().int(),
+  total_sales: z.coerce.number(),
+});
+
+export type DailySalesStat = z.infer<typeof DailySalesStatSchema>;

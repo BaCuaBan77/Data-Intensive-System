@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import {
   calculateDailyPlayersStat,
   calculateMonthlyPlayersStat,
-  calculateDailyMatchesStat
+  calculateDailyMatchesStat,
+  calculateDailySalesStat
 } from "../services/metrics.service";
 import { MetricsRequestSchema } from "../schemas/metrics.schema";
 
@@ -35,6 +36,18 @@ export const getDailyMatchesStat = async (request: Request, response: Response, 
     const params = MetricsRequestSchema.parse(request.query);
 
     const stats = await calculateDailyMatchesStat(params);
+
+    return response.json(stats);
+  } catch (err) {
+    next({ message: "Failed to load statistics" });
+  }
+};
+
+export const getDailySalesStat = async (request: Request, response: Response, next: NextFunction) => {
+  try {
+    const params = MetricsRequestSchema.parse(request.query);
+
+    const stats = await calculateDailySalesStat(params);
 
     return response.json(stats);
   } catch (err) {
