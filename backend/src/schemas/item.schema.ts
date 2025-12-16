@@ -55,6 +55,15 @@ export const ItemFilterSchema = z.object({
 
 export type ItemFilter = z.infer<typeof ItemFilterSchema>;
 
+// Item schema to expand a Transaction
+export const ItemInfoSchema = z.object({
+  id: z.number().int(),
+  name: z.string(),
+  category: z.string(),
+});
+
+export type ItemInfo = z.infer<typeof ItemInfoSchema>;
+
 export const ItemDeletedSchema = z.object({
   id: z.number().int(),
 });

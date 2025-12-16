@@ -6,7 +6,7 @@ export const getDatabaseName = async (request: Request, response: Response, next
   try {
     const { user_id } = UserIdSchema.parse(request.query);
     
-    const dbName = await getDbByUserId(user_id);
+    const dbName = getDbByUserId(user_id);
 
     return response.json({ dbName });
   } catch (err) {

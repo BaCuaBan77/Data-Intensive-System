@@ -1,7 +1,8 @@
-import { queryFromPrimary, queryToBothDbs } from "./database"
+import { queryPrimary, queryToBothDbs } from "./database";
 import { CreateItemInput, ItemSchema, Item, UpdateItemInput, ItemDeletedSchema, ItemDeleted } from "../schemas/item.schema";
 
 export const getAllItems = async (shop_id: number): Promise<Item[]> => {
+  // Get data only from Primary DB as it is identical in both
   const sqlQuery = {
     text: `
       SELECT i.id,
@@ -21,7 +22,7 @@ export const getAllItems = async (shop_id: number): Promise<Item[]> => {
     values: [shop_id],
   };
 
-  return await queryFromPrimary(sqlQuery, ItemSchema);
+  return await queryPrimary(sqlQuery, ItemSchema);
 };
 
 export const insertItem = async (body: CreateItemInput): Promise<Item> => {
@@ -55,8 +56,9 @@ export const insertItem = async (body: CreateItemInput): Promise<Item> => {
     ]
   };
 
+  // Insert to Primary and Shard in one transaction
   try {
-    return queryToBothDbs(sqlQuery, ItemSchema);
+    return await queryToBothDbs(sqlQuery, ItemSchema);
   } catch (err) {
     throw err;
   }
@@ -121,8 +123,9 @@ export const updateItem = async (id: number, body: UpdateItemInput): Promise<Ite
     values
   };
 
+  // Update to Primary and Shard in one transaction
   try {
-    return queryToBothDbs(sqlQuery, ItemSchema);
+    return await queryToBothDbs(sqlQuery, ItemSchema);
   } catch (err) {
     throw err;
   }
@@ -139,8 +142,9 @@ export const deleteItem = async (id: number): Promise<ItemDeleted> => {
     values: [id]
   };
 
+  // Update to Primary and Shard in one transaction
   try {
-    return queryToBothDbs(sqlQuery, ItemDeletedSchema);
+    return await queryToBothDbs(sqlQuery, ItemDeletedSchema);
   } catch (err) {
     throw err;
   }

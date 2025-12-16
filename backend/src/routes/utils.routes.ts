@@ -19,6 +19,8 @@ const utilsRouter = Router();
  *     responses:
  *       200:
  *         description: Returns database name
+ *       500:
+ *         description: Failed to load database name
  */
 utilsRouter.get("/get-database-name", getDatabaseName);
 

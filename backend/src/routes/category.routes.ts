@@ -13,6 +13,8 @@ const categoriesRouter = Router();
  *     responses:
  *       200:
  *         description: Returns all categories
+ *       500:
+ *         description: Failed to load categories
  */
 categoriesRouter.get("/", getCategories);
 

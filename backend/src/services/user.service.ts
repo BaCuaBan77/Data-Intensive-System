@@ -1,17 +1,5 @@
-import { QueryConfig } from "pg";
-import { queryFromPrimary, queryFromShard } from "./database"
+import { queryFromBothDbs } from "./database"
 import { UserSchema, User } from "../schemas/user.schema";
-
-const getUsersFromDbs = async (sqlQuery: QueryConfig): Promise<User[]> => {
-  if (sqlQuery.values === null) {
-    sqlQuery.values = [];
-  }
-
-  const primaryUsers = await queryFromPrimary(sqlQuery, UserSchema);
-  const shardUsers = await queryFromShard(sqlQuery, UserSchema);
-
-  return [...primaryUsers, ...shardUsers].sort((a, b) => a.id - b.id);
-};
 
 export const findUsers = async ({
   email,
@@ -25,40 +13,65 @@ export const findUsers = async ({
   const where: string[] = [];
   const values: any[] = [];
 
+  // Filter by role
   if (role) {
     values.push(role);
-    where.push(`role = $${values.length}`);
+    where.push(`u.role = $${values.length}`);
   }
 
+  // Filter by status
   if (status) {
     values.push(status);
-    where.push(`status = $${values.length}`);
+    where.push(`u.status = $${values.length}`);
   }
 
+  // Filter by email
   if (email) {
     values.push(`%${email}%`);
-    where.push(`email ILIKE $${values.length}`);
+    where.push(`u.email ILIKE $${values.length}`);
   }
 
+  // Adding banned = true only if the latest added ban
+  // has start_time less than now and is endless or
+  // has start_time less than now and end_time more than now
   const sql = `
-    SELECT id,
-      email,
-      full_name,
-      role,
-      match_wins,
-      match_losses,
-      match_ties,
-      total_matches,      
-      status,
-      currency_balance,
-      purchased_items,
-      rating
-    FROM users
+    SELECT
+      u.id,
+      u.email,
+      u.full_name,
+      u.role,
+      u.match_wins,
+      u.match_losses,
+      u.match_ties,
+      u.total_matches,      
+      u.status,
+      u.currency_balance,
+      u.purchased_items,
+      u.rating,
+
+      CASE
+        WHEN b.id IS NULL THEN false
+        WHEN b.start_time > NOW() THEN false
+        WHEN b.end_time IS NULL THEN true
+        WHEN b.end_time > NOW() THEN true
+        ELSE false
+      END AS banned
+
+    FROM users u
+
+    LEFT JOIN LATERAL (
+      SELECT id, start_time, end_time
+      FROM bans
+      WHERE player_id = u.id
+      ORDER BY id DESC
+      LIMIT 1
+    ) b ON TRUE
+
     ${where.length ? "WHERE " + where.join(" AND ") : ""};
   `;
 
-  return await getUsersFromDbs({
+  return await queryFromBothDbs({
     text: sql,
     values,
-  });
+  }, UserSchema);
 };

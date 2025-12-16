@@ -13,6 +13,8 @@ const shopsRouter = Router();
  *     responses:
  *       200:
  *         description: Returns all shops
+ *       500:
+ *         description: Failed to load shops
  */
 shopsRouter.get("/", getShops);
 

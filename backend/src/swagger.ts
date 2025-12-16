@@ -12,7 +12,7 @@ const options: swaggerJSDoc.Options = {
     },
     paths: {},
   },
-  apis: [path.join(__dirname, "./routes/*.routes.js")], // Path to your route files
+  apis: [path.join(__dirname, "./routes/*.routes.js")], // Path to route files
 };
 
 export const swaggerSpec = swaggerJSDoc(options);
