@@ -1,5 +1,11 @@
 import { queryFromBothDbs } from "./database";
-import { MetricsRequest, DailyPlayersStatSchema, DailyPlayersStat } from "../schemas/metrics.schema";
+import {
+  MetricsRequest,
+  DailyPlayersStatSchema,
+  DailyPlayersStat,
+  MonthlyPlayersStatSchema,
+  MonthlyPlayersStat
+} from "../schemas/metrics.schema";
 
 const isDate = (value: unknown): value is Date => {
   return value instanceof Date;
@@ -63,12 +69,51 @@ export const calculateDailyPlayersStat = async (
       LEFT JOIN players p ON p.day = d.day
       GROUP BY d.day
       ORDER BY d.day;
-      `,
+    `,
     values: [start_date, interval],
   };
 
   const data = await queryFromBothDbs(sqlQuery, DailyPlayersStatSchema);
-  const mergedDaily = mergeStats(data, "day", "unique_players");
+  const merged = mergeStats(data, "day", "unique_players");
 
-  return mergedDaily;
+  return merged;
+};
+
+export const calculateMonthlyPlayersStat = async (
+  filters: MetricsRequest
+): Promise<MonthlyPlayersStat[]> => {
+  const { interval, start_date } = filters;
+
+  const sqlQuery = {
+    text: `
+      WITH months AS (
+        -- Generate the first day of each month in the interval
+        SELECT generate_series(
+          date_trunc('month', $1::date),
+          date_trunc('month', $1::date) + ($2 - 1) * INTERVAL '1 month',  -- number of months
+          INTERVAL '1 month'
+        )::date AS month_start
+      ),
+      players AS (
+        SELECT date_trunc('month', start_time)::date AS month_start, player_white AS player_id
+        FROM matches
+        UNION ALL
+        SELECT date_trunc('month', start_time)::date AS month_start, player_black AS player_id
+        FROM matches
+      )
+      SELECT
+        m.month_start,
+        COUNT(DISTINCT p.player_id)::int AS unique_players
+      FROM months m
+      LEFT JOIN players p ON p.month_start = m.month_start
+      GROUP BY m.month_start
+      ORDER BY m.month_start;
+    `,
+    values: [start_date, interval],
+  };
+
+  const data = await queryFromBothDbs(sqlQuery, MonthlyPlayersStatSchema);
+  const merged = mergeStats(data, "month_start", "unique_players");
+
+  return merged;
 };
