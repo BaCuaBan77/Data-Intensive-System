@@ -62,14 +62,14 @@ export const queryToEitherDb = async <T>(
 };
 
 // Used for the cases when data is different in databases and has to be merged when retrieved
-export const queryFromBothDbs = async <T extends { id: number }>(
+export const queryFromBothDbs = async <T>(
   sql: QueryConfig,
   schema: ZodSchema<T>
 ): Promise<T[]> => {
   const primaryData = await queryPrimary(sql, schema);
   const shardData = await queryShard(sql, schema);
 
-  return [...primaryData, ...shardData].sort((a, b) => a.id - b.id);
+  return [...primaryData, ...shardData];
 };
 
 // Used for the cases when data is the same in both databases and has to be updated at the same time,

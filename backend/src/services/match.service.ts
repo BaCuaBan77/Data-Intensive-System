@@ -41,5 +41,7 @@ export const getAllMatches = async (): Promise<Match[]> => {
     values: [],
   };
 
-  return await queryFromBothDbs(sqlQuery, matchSchema);
+  const data = await queryFromBothDbs(sqlQuery, matchSchema);
+
+  return data.sort((a, b) => a.id - b.id);
 };

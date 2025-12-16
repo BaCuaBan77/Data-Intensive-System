@@ -32,5 +32,7 @@ export const getAllTransactions = async (): Promise<Transaction[]> => {
     values: [],
   };
 
-  return await queryFromBothDbs(sqlQuery, transactionSchema);
+  const data = await queryFromBothDbs(sqlQuery, transactionSchema);
+
+  return data.sort((a, b) => a.id - b.id);
 };

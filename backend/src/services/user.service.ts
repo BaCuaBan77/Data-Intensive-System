@@ -70,8 +70,10 @@ export const findUsers = async ({
     ${where.length ? "WHERE " + where.join(" AND ") : ""};
   `;
 
-  return await queryFromBothDbs({
-    text: sql,
-    values,
-  }, UserSchema);
+  const data = await queryFromBothDbs({
+      text: sql,
+      values,
+    }, UserSchema);
+
+  return data.sort((a, b) => a.id - b.id);
 };
