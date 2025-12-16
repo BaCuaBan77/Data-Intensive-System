@@ -8,6 +8,7 @@ import itemsRouter from "./routes/item.routes";
 import shopsRouter from "./routes/shop.routes";
 import utilsRouter from "./routes/utils.routes";
 import matchesRouter from "./routes/match.routes";
+import metricsRouter from "./routes/metrics.routes";
 import categoriesRouter from "./routes/category.routes";
 import transactionsRouter from "./routes/transaction.routes";
 
@@ -23,6 +24,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/items", itemsRouter);
 app.use("/api/shops", shopsRouter);
 app.use("/api/matches", matchesRouter);
+app.use("/api/metrics", metricsRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/transactions", transactionsRouter);
 

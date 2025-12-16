@@ -1,5 +1,9 @@
 import { ZodSchema } from "zod";
-import { Pool, QueryConfig } from "pg";
+import { Pool, QueryConfig, types } from "pg";
+
+// 20 = OID for int8 / bigint in PostgreSQL
+// This is for returning bigint for metrics as integer
+types.setTypeParser(20, (val) => parseInt(val, 10));
 
 const PRIMARY_DB = "primaryDb";
 const SHARD_DB = "shardDb";
