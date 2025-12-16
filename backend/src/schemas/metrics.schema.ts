@@ -40,3 +40,10 @@ export const MonthlyPlayersStatSchema = z.object({
 });
 
 export type MonthlyPlayersStat = z.infer<typeof MonthlyPlayersStatSchema>;
+
+export const DailyMatchesStatSchema = z.object({
+  day: z.date(),
+  matches: z.number().int(),
+});
+
+export type DailyMatchesStat = z.infer<typeof DailyMatchesStatSchema>;

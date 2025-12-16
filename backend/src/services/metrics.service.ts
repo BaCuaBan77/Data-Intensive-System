@@ -4,7 +4,9 @@ import {
   DailyPlayersStatSchema,
   DailyPlayersStat,
   MonthlyPlayersStatSchema,
-  MonthlyPlayersStat
+  MonthlyPlayersStat,
+  DailyMatchesStatSchema,
+  DailyMatchesStat
 } from "../schemas/metrics.schema";
 
 const isDate = (value: unknown): value is Date => {
@@ -90,7 +92,7 @@ export const calculateMonthlyPlayersStat = async (
         -- Generate the first day of each month in the interval
         SELECT generate_series(
           date_trunc('month', $1::date),
-          date_trunc('month', $1::date) + ($2 - 1) * INTERVAL '1 month',  -- number of months
+          date_trunc('month', $1::date) + ($2 - 1) * INTERVAL '1 month',
           INTERVAL '1 month'
         )::date AS month_start
       ),
@@ -114,6 +116,38 @@ export const calculateMonthlyPlayersStat = async (
 
   const data = await queryFromBothDbs(sqlQuery, MonthlyPlayersStatSchema);
   const merged = mergeStats(data, "month_start", "unique_players");
+
+  return merged;
+};
+
+export const calculateDailyMatchesStat = async (
+  filters: MetricsRequest
+): Promise<DailyMatchesStat[]> => {
+  const { interval, start_date } = filters;
+
+  const sqlQuery = {
+    text: `
+      WITH days AS (
+        SELECT generate_series(
+          $1::date,
+          $1::date + ($2 - 1) * INTERVAL '1 day',
+          INTERVAL '1 day'
+        )::date AS day
+      )
+      SELECT
+        d.day,
+        COUNT(m.id)::int AS matches
+      FROM days d
+      LEFT JOIN matches m
+        ON m.start_time::date = d.day
+      GROUP BY d.day
+      ORDER BY d.day;
+    `,
+    values: [start_date, interval],
+  };
+
+  const data = await queryFromBothDbs(sqlQuery, DailyMatchesStatSchema);
+  const merged = mergeStats(data, "day", "matches");
 
   return merged;
 };
