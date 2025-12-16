@@ -17,7 +17,7 @@ const isDate = (value: unknown): value is Date => {
 
 // Generic merge function for statistics
 // because we get data from primary and shard databases
-export const mergeStats = <
+const mergeStats = <
   T extends Record<string, any>,
   K extends keyof T,
   V extends readonly (keyof T)[]
