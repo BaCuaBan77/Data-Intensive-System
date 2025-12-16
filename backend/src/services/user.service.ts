@@ -1,17 +1,12 @@
 import { queryFromBothDbs } from "./database"
-import { UserSchema, User } from "../schemas/user.schema";
+import { UserSchema, User, SearchQuery } from "../schemas/user.schema";
 
-export const findUsers = async ({
-  email,
-  status,
-  role,
-}: {
-  email?: string | null;
-  status?: string | null;
-  role?: string | null;
-}): Promise<User[]> => {
+export const findUsers = async (
+  filters: SearchQuery
+): Promise<User[]> => {
   const where: string[] = [];
   const values: any[] = [];
+  const { email, status, role } = filters;
 
   // Filter by role
   if (role) {
