@@ -33,3 +33,25 @@ export const DailyPlayersStatSchema = z.object({
 });
 
 export type DailyPlayersStat = z.infer<typeof DailyPlayersStatSchema>;
+
+export const MonthlyPlayersStatSchema = z.object({
+  month_start: z.date(),
+  unique_players: z.number().int(),
+});
+
+export type MonthlyPlayersStat = z.infer<typeof MonthlyPlayersStatSchema>;
+
+export const DailyMatchesStatSchema = z.object({
+  day: z.date(),
+  matches: z.number().int(),
+});
+
+export type DailyMatchesStat = z.infer<typeof DailyMatchesStatSchema>;
+
+export const DailySalesStatSchema = z.object({
+  day: z.date(),
+  sales_count: z.number().int(),
+  total_sales: z.coerce.number(),
+});
+
+export type DailySalesStat = z.infer<typeof DailySalesStatSchema>;
