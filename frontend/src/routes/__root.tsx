@@ -1,5 +1,5 @@
 import { Link, createRootRoute, Outlet } from '@tanstack/react-router'
-import { Shop, Dashboard, Storage, Analytics, Settings, ViewSidebarOutlined, Man } from '@mui/icons-material'
+import { Shop, Dashboard, Storage, Analytics, Settings, ViewSidebarOutlined, Man, CalendarMonth } from '@mui/icons-material'
 
 export const Route = createRootRoute({
     component: RootComponent,
@@ -50,32 +50,32 @@ function RootComponent() {
                                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                                 data-tip="Dashboard"
                             >
-                                <Dashboard className="my-1.5 inline-block size-4" color="secondary"/>
+                                <Dashboard className="my-1.5 inline-block size-4" color="secondary" />
                                 <span className="is-drawer-close:hidden">Dashboard</span>
                             </Link>
                         </li>
 
                         {/* Shop */}
                         <li>
-                            <Link 
-                                to="/shop" 
-                                className="is-drawer-close:tooltip is-drawer-close:tooltip-right" 
+                            <Link
+                                to="/shop"
+                                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                                 data-tip="Shop"
                             >
-                                <Shop className="my-1.5 inline-block size-4" color="action"/>
+                                <Shop className="my-1.5 inline-block size-4" color="action" />
                                 <span className="is-drawer-close:hidden">Shop</span>
                             </Link>
                         </li>
 
-                        {/* Analytics */}
+                        {/* Matches */}
                         <li>
-                            <Link 
-                                to="/analytics" 
-                                className="is-drawer-close:tooltip is-drawer-close:tooltip-right" 
-                                data-tip="Analytics"
+                            <Link
+                                to="/matches"
+                                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                                data-tip="Matches"
                             >
-                                <Analytics className="my-1.5 inline-block size-4" />
-                                <span className="is-drawer-close:hidden">Analytics</span>
+                                <CalendarMonth className="my-1.5 inline-block size-4" />
+                                <span className="is-drawer-close:hidden">Matches</span>
                             </Link>
                         </li>
 

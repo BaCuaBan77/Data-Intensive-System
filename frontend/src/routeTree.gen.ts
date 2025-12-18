@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UsersRouteImport } from './routes/users'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as MatchesRouteImport } from './routes/matches'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -22,6 +23,11 @@ const UsersRoute = UsersRouteImport.update({
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MatchesRoute = MatchesRouteImport.update({
+  id: '/matches',
+  path: '/matches',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
@@ -38,12 +44,14 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/matches': typeof MatchesRoute
   '/shop': typeof ShopRoute
   '/users': typeof UsersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/matches': typeof MatchesRoute
   '/shop': typeof ShopRoute
   '/users': typeof UsersRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
+  '/matches': typeof MatchesRoute
   '/shop': typeof ShopRoute
   '/users': typeof UsersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analytics' | '/shop' | '/users'
+  fullPaths: '/' | '/analytics' | '/matches' | '/shop' | '/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analytics' | '/shop' | '/users'
-  id: '__root__' | '/' | '/analytics' | '/shop' | '/users'
+  to: '/' | '/analytics' | '/matches' | '/shop' | '/users'
+  id: '__root__' | '/' | '/analytics' | '/matches' | '/shop' | '/users'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  MatchesRoute: typeof MatchesRoute
   ShopRoute: typeof ShopRoute
   UsersRoute: typeof UsersRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/matches': {
+      id: '/matches'
+      path: '/matches'
+      fullPath: '/matches'
+      preLoaderRoute: typeof MatchesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/analytics': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
+  MatchesRoute: MatchesRoute,
   ShopRoute: ShopRoute,
   UsersRoute: UsersRoute,
 }
