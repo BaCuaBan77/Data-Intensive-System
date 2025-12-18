@@ -208,3 +208,6 @@ This project is for educational purposes.
 
 Long Le - Long.n.le@student.lut.fi
 
+Elena Tishkovskaya - Elena.Tishkovskaya@student.lut.fi
+
+Nghi Pham - Nghi.T.Pham@student.lut.fi
