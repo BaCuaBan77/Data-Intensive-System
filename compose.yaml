@@ -50,7 +50,6 @@ services:
       - pgnet
 
   backend:
-    container_name: backend
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -70,7 +69,6 @@ services:
       - pgnet
   
   frontend:
-    container_name: frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile

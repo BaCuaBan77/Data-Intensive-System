@@ -4,9 +4,9 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import StorageIcon from '@mui/icons-material/Storage';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import SettingsIcon from '@mui/icons-material/Settings';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 export function SideDrawer() {
-  console.log('SideDrawer is rendering'); // Debug log
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
@@ -44,14 +44,14 @@ export function SideDrawer() {
               </Link>
             </li>
 
-            {/* Database Management */}
+            {/* Matches */}
             <li>
               <button
                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Database"
+                data-tip="Matches"
               >
-                <StorageIcon />
-                <span className="is-drawer-close:hidden">Database</span>
+                <CalendarMonthIcon />
+                <span className="is-drawer-close:hidden">Matches</span>
               </button>
             </li>
 

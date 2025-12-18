@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api";
+import type { CreateBanInput } from "../api";
 import type { UserSearchParams } from "../api";
 
 export function useUsersQuery(
@@ -40,5 +41,72 @@ export function useItemsQuery(shopId: number) {
             return api.getItems(shopId);
         },
         enabled: !!shopId,
+    });
+}
+
+export function useDailyActiveUsersQuery(params: { interval: number; start_date: string }) {
+    return useQuery({
+        queryKey: ["dailyActiveUsers", params],
+        queryFn: async () => {
+            return api.getDailyActiveUsers(params);
+        },
+    });
+}
+
+export function useMonthlyActiveUsersQuery(params: { interval: number; start_date: string }) {
+    return useQuery({
+        queryKey: ["monthlyActiveUsers", params],
+        queryFn: async () => {
+            return api.getMonthlyActiveUsers(params);
+        },
+    });
+}
+
+export function useDailyMatchesStatsQuery(params: { interval: number; start_date: string }) {
+    return useQuery({
+        queryKey: ["dailyMatchesStats", params],
+        queryFn: async () => {
+            return api.getDailyMatchesStats(params);
+        },
+    });
+}
+
+export function useDailySalesStatsQuery(params: { interval: number; start_date: string }) {
+    return useQuery({
+        queryKey: ["dailySalesStats", params],
+        queryFn: async () => {
+            return api.getDailySalesStats(params);
+        },
+    });
+}
+
+export function useMatchesQuery() {
+    return useQuery({
+        queryKey: ["matches"],
+        queryFn: async () => {
+            return api.getAllMatches();
+        },
+    });
+}
+
+export function useBansQuery(userId: number) {
+    return useQuery({
+        queryKey: ["bans", userId],
+        queryFn: async () => {
+            return api.getBans(userId);
+        },
+        enabled: !!userId,
+    });
+}
+
+export function useBanUserMutation() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (data: CreateBanInput) => {
+            return api.banUser(data);
+        },
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ["bans", variables.player_id] });
+        },
     });
 }

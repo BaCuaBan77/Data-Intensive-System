@@ -4,7 +4,6 @@ import { z } from 'zod'
 export const UserResponseSchema = z.object({
   id: z.number(),
   email: z.string(),
-  password: z.string(),
   full_name: z.string().nullable(),
   role: z.string(),
   match_wins: z.number().default(0),
@@ -26,6 +25,7 @@ export const UserSearchParamsSchema = z.object({
 
 // Infer TypeScript types from Zod schemas
 export type UserResponse = z.infer<typeof UserResponseSchema>
+export type User = UserResponse
 export type UserSearchParams = z.infer<typeof UserSearchParamsSchema>
 
 // API Configuration
@@ -131,6 +131,150 @@ export async function getItems(shopId: number) {
   return z.array(ItemSchema).parse(response)
 }
 
+
+// METRICS ENDPOINTS
+
+// Metrics Schemas
+export const DailyPlayersStatSchema = z.object({
+  day: z.string(), // Date comes as string from JSON
+  unique_players: z.number(),
+})
+
+export const MonthlyPlayersStatSchema = z.object({
+  month_start: z.string(), // Date comes as string from JSON
+  unique_players: z.number(),
+})
+
+export const DailyMatchesStatSchema = z.object({
+  day: z.string(), // Date comes as string from JSON
+  matches: z.number(),
+})
+
+export const DailySalesStatSchema = z.object({
+  day: z.string(), // Date comes as string from JSON
+  sales_count: z.number(),
+  total_sales: z.number(),
+})
+
+export type DailyPlayersStat = z.infer<typeof DailyPlayersStatSchema>
+export type MonthlyPlayersStat = z.infer<typeof MonthlyPlayersStatSchema>
+export type DailyMatchesStat = z.infer<typeof DailyMatchesStatSchema>
+export type DailySalesStat = z.infer<typeof DailySalesStatSchema>
+
+// Ban Schemas
+export const BanSchema = z.object({
+  id: z.number(),
+  player: z.object({ id: z.number(), full_name: z.string().nullable() }),
+  admin: z.object({ id: z.number(), full_name: z.string().nullable() }),
+  reason: z.string(),
+  start_time: z.string(),
+  end_time: z.string().nullable(),
+})
+
+export const CreateBanSchema = z.object({
+  player_id: z.number(),
+  admin_id: z.number(),
+  reason: z.string(),
+  start_time: z.string(), // ISO string
+  end_time: z.string().nullable(), // ISO string
+})
+
+export type Ban = z.infer<typeof BanSchema>
+export type CreateBanInput = z.infer<typeof CreateBanSchema>
+
+// Match Schema
+export const MatchSchema = z.object({
+  id: z.number(),
+  moves: z.array(z.string()).nullable(),
+  result: z.string().nullable(),
+  player_white: z.object({ id: z.number(), full_name: z.string().nullable() }),
+  player_black: z.object({ id: z.number(), full_name: z.string().nullable() }),
+  winner: z.object({ id: z.number(), full_name: z.string().nullable() }).nullable(),
+  start_time: z.string(),
+  end_time: z.string().nullable(),
+  used_skins: z.any().nullable(),
+  rating_change_white: z.number().nullable(),
+  rating_change_black: z.number().nullable(),
+})
+
+export type Match = z.infer<typeof MatchSchema>
+
+/**
+ * Get daily active users statistics
+ * @param params Interval and start date
+ * @returns Array of daily active users statistics
+ */
+export async function getDailyActiveUsers(params: { interval: number; start_date: string }) {
+  const queryString = buildQueryString(params)
+  const response = await apiRequest<DailyPlayersStat[]>(`/metrics/daily-active-users${queryString}`)
+  return z.array(DailyPlayersStatSchema).parse(response)
+}
+
+/**
+ * Get monthly active users statistics
+ * @param params Interval and start date
+ * @returns Array of monthly active users statistics
+ */
+export async function getMonthlyActiveUsers(params: { interval: number; start_date: string }) {
+  const queryString = buildQueryString(params)
+  const response = await apiRequest<MonthlyPlayersStat[]>(`/metrics/monthly-active-users${queryString}`)
+  return z.array(MonthlyPlayersStatSchema).parse(response)
+}
+
+/**
+ * Get daily matches statistics
+ * @param params Interval and start date
+ * @returns Array of daily matches statistics
+ */
+export async function getDailyMatchesStats(params: { interval: number; start_date: string }) {
+  const queryString = buildQueryString(params)
+  const response = await apiRequest<DailyMatchesStat[]>(`/metrics/daily-matches${queryString}`)
+  return z.array(DailyMatchesStatSchema).parse(response)
+}
+
+/**
+ * Get daily sales statistics
+ * @param params Interval and start date
+ * @returns Array of daily sales statistics
+ */
+export async function getDailySalesStats(params: { interval: number; start_date: string }) {
+  const queryString = buildQueryString(params)
+  const response = await apiRequest<DailySalesStat[]>(`/metrics/daily-sales${queryString}`)
+  return z.array(DailySalesStatSchema).parse(response)
+}
+
+/**
+ * Get all matches
+ * @returns Array of matches
+ */
+export async function getAllMatches() {
+  const response = await apiRequest<Match[]>('/matches')
+  return z.array(MatchSchema).parse(response)
+}
+
+/**
+ * Get all bans for a user (or all bans if user_id is used for routing to DB)
+ * @param userId The ID of the user to route the request
+ * @returns Array of bans
+ */
+export async function getBans(userId: number) {
+  const response = await apiRequest<Ban[]>(`/bans?user_id=${userId}`)
+  return z.array(BanSchema).parse(response)
+}
+
+/**
+ * Ban a user
+ * @param data Ban data
+ * @returns Created ban
+ */
+export async function banUser(data: CreateBanInput) {
+  const response = await apiRequest<Ban>('/bans', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+  return BanSchema.parse(response)
+}
+
 // Default export for convenience
 const api = {
   // READ ENDPOINTS
@@ -138,6 +282,16 @@ const api = {
   getShops,
   getCategories,
   getItems,
+  // METRICS ENDPOINTS
+  getDailyActiveUsers,
+  getMonthlyActiveUsers,
+  getDailyMatchesStats,
+  getDailySalesStats,
+  // MATCH ENDPOINTS
+  getAllMatches,
+  // BAN ENDPOINTS
+  getBans,
+  banUser,
 }
 
 export default api
