@@ -1,23 +1,30 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Search, MoreVert } from '@mui/icons-material';
+import { Search, MoreVert, Block } from '@mui/icons-material';
 import { useUsersQuery } from '../hooks/queries';
+import { BanUserModal } from './BanUserModal';
+import type { User } from '../api';
+
+const ITEMS_PER_PAGE = 15;
 
 export function Users() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // Debounce search term to avoid too many API calls
+  // Ban Modal State
+  const [selectedUserToBan, setSelectedUserToBan] = useState<User | null>(null);
+
+  // Debounce search term
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-    }, 500); // 500ms delay
-
+    }, 500);
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Create search parameters for API using debounced term and filters
+  // Create search parameters
   const searchParams = useMemo(() => {
     const params: { email?: string; status?: string; role?: string } = {};
     if (debouncedSearchTerm.trim()) {
@@ -32,15 +39,25 @@ export function Users() {
     return params;
   }, [debouncedSearchTerm, statusFilter, roleFilter]);
 
-  // Fetch users from backend with email search
+  // Fetch users
   const { data: users = [], isLoading, error } = useUsersQuery(searchParams);
 
-  // Filter users based on status and role filters (client-side for non-API filters)
-  // Use users directly as they are now filtered on the server
+  // Filter users (client-side for now as API returns filtered list)
   const filteredUsers = users;
 
+  // Pagination
+  const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // Reset page on filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, roleFilter]);
+
   const handleAdminAction = (action: string, userId: number, userName: string | null) => {
-    // TODO: Implement API calls for admin actions
     console.log(`Performing ${action} on user ${userId} (${userName || 'Unknown User'})`);
   };
 
@@ -72,14 +89,13 @@ export function Users() {
         </div>
       )}
 
-      {/* Content - only show when not loading and no error */}
+      {/* Content */}
       {!isLoading && !error && (
         <>
-          {/* Filters and Search */}
+          {/* Filters */}
           <div className="card bg-base-100 shadow-xl mb-6">
             <div className="card-body">
               <div className="flex flex-col lg:flex-row gap-4">
-                {/* Search */}
                 <div className="form-control w-full lg:flex-1">
                   <label className="label">
                     <span className="label-text font-semibold">Search by Email</span>
@@ -98,7 +114,6 @@ export function Users() {
                   </div>
                 </div>
 
-                {/* Status Filter */}
                 <div className="form-control w-full lg:max-w-xs">
                   <label className="label">
                     <span className="label-text font-semibold">Status</span>
@@ -114,7 +129,6 @@ export function Users() {
                   </select>
                 </div>
 
-                {/* Role Filter */}
                 <div className="form-control w-full lg:max-w-xs">
                   <label className="label">
                     <span className="label-text font-semibold">Role</span>
@@ -130,31 +144,6 @@ export function Users() {
                   </select>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Stats Summary */}
-          <div className="stats stats-horizontal shadow mb-6 w-full">
-            <div className="stat">
-              <div className="stat-title">Total Users</div>
-              <div className="stat-value text-primary">{filteredUsers.length}</div>
-              <div className="stat-desc">of {users.length} total</div>
-            </div>
-
-            <div className="stat">
-              <div className="stat-title">Active Users</div>
-              <div className="stat-value text-success">
-                {filteredUsers.filter(u => u.status === 'active').length}
-              </div>
-              <div className="stat-desc">Currently online</div>
-            </div>
-
-            <div className="stat">
-              <div className="stat-title">Admins</div>
-              <div className="stat-value text-info">
-                {filteredUsers.filter(u => u.role === 'admin').length}
-              </div>
-              <div className="stat-desc">Total administrators</div>
             </div>
           </div>
 
@@ -178,7 +167,7 @@ export function Users() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredUsers.map(user => (
+                    {paginatedUsers.map(user => (
                       <tr key={user.id} className="hover">
                         <th className="font-mono">{user.id}</th>
                         <td>
@@ -196,9 +185,7 @@ export function Users() {
                             </div>
                           </div>
                         </td>
-                        <td>
-                          <span className="font-mono text-sm">{user.email}</span>
-                        </td>
+                        <td><span className="font-mono text-sm">{user.email}</span></td>
                         <td>
                           <div className={`badge ${user.role === 'admin' ? 'badge-info' : 'badge-ghost'}`}>
                             {user.role}
@@ -231,59 +218,9 @@ export function Users() {
                             </div>
                             <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                               <li>
-                                <a onClick={() => handleAdminAction('view_profile', user.id, user.full_name)}>
-                                  View Profile
-                                </a>
-                              </li>
-                              <li>
-                                <a onClick={() => handleAdminAction('view_matches', user.id, user.full_name)}>
-                                  View Matches
-                                </a>
-                              </li>
-                              <li>
-                                <a onClick={() => handleAdminAction('adjust_balance', user.id, user.full_name)}>
-                                  Adjust Balance
-                                </a>
-                              </li>
-                              <li>
-                                <a onClick={() => handleAdminAction('reset_password', user.id, user.full_name)}>
-                                  Reset Password
-                                </a>
-                              </li>
-                              <div className="divider my-1"></div>
-                              {user.status === 'active' ? (
-                                <li>
-                                  <a
-                                    className="text-warning"
-                                    onClick={() => handleAdminAction('suspend', user.id, user.full_name)}
-                                  >
-                                    Suspend User
-                                  </a>
-                                </li>
-                              ) : (
-                                <li>
-                                  <a
-                                    className="text-success"
-                                    onClick={() => handleAdminAction('activate', user.id, user.full_name)}
-                                  >
-                                    Activate User
-                                  </a>
-                                </li>
-                              )}
-                              {user.role === 'player' && (
-                                <li>
-                                  <a onClick={() => handleAdminAction('promote_admin', user.id, user.full_name)}>
-                                    Promote to Admin
-                                  </a>
-                                </li>
-                              )}
-                              <div className="divider my-1"></div>
-                              <li>
-                                <a
-                                  className="text-error"
-                                  onClick={() => handleAdminAction('delete', user.id, user.full_name)}
-                                >
-                                  Delete User
+                                <a onClick={() => setSelectedUserToBan(user)} className="text-error">
+                                  <Block fontSize="small" />
+                                  Ban Management
                                 </a>
                               </li>
                             </ul>
@@ -293,19 +230,48 @@ export function Users() {
                     ))}
                   </tbody>
                 </table>
-
                 {filteredUsers.length === 0 && (
                   <div className="text-center py-8">
                     <div className="text-base-content/50 mb-2">No users found</div>
-                    <div className="text-sm text-base-content/40">
-                      {searchTerm ? 'Try adjusting your email search or filters' : 'No users match the current filters'}
-                    </div>
                   </div>
                 )}
               </div>
             </div>
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-4">
+              <div className="join">
+                <button
+                  className="join-item btn"
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  «
+                </button>
+                <button className="join-item btn">
+                  Page {currentPage} of {totalPages}
+                </button>
+                <button
+                  className="join-item btn"
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                >
+                  »
+                </button>
+              </div>
+            </div>
+          )}
         </>
+      )}
+
+      {/* Ban Modal */}
+      {selectedUserToBan && (
+        <BanUserModal
+          user={selectedUserToBan}
+          onClose={() => setSelectedUserToBan(null)}
+        />
       )}
     </div>
   );

@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api";
+import type { CreateBanInput } from "../api";
 import type { UserSearchParams } from "../api";
 
 export function useUsersQuery(
@@ -84,6 +85,28 @@ export function useMatchesQuery() {
         queryKey: ["matches"],
         queryFn: async () => {
             return api.getAllMatches();
+        },
+    });
+}
+
+export function useBansQuery(userId: number) {
+    return useQuery({
+        queryKey: ["bans", userId],
+        queryFn: async () => {
+            return api.getBans(userId);
+        },
+        enabled: !!userId,
+    });
+}
+
+export function useBanUserMutation() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (data: CreateBanInput) => {
+            return api.banUser(data);
+        },
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ["bans", variables.player_id] });
         },
     });
 }

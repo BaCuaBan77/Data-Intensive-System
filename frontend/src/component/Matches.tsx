@@ -1,8 +1,18 @@
+import { useState } from 'react';
 import { useMatchesQuery } from '../hooks/queries';
 import { EmojiEvents, AccessTime, Person } from '@mui/icons-material';
 
 export function Matches() {
     const { data: matches = [], isLoading, error } = useMatchesQuery();
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const ITEMS_PER_PAGE = 15;
+
+    // Pagination logic
+    const totalPages = Math.ceil(matches.length / ITEMS_PER_PAGE);
+    const paginatedMatches = matches.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleString();
@@ -93,7 +103,7 @@ export function Matches() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {matches.map(match => (
+                                        {paginatedMatches.map(match => (
                                             <tr key={match.id} className="hover">
                                                 <th className="font-mono">{match.id}</th>
 
@@ -180,6 +190,31 @@ export function Matches() {
                             </div>
                         </div>
                     </div>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className="flex justify-center mt-6">
+                            <div className="join">
+                                <button
+                                    className="join-item btn"
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                >
+                                    «
+                                </button>
+                                <button className="join-item btn">
+                                    Page {currentPage} of {totalPages}
+                                </button>
+                                <button
+                                    className="join-item btn"
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    »
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </>
             )}
         </div>

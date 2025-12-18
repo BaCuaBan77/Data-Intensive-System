@@ -7,6 +7,8 @@ export function Shop() {
   const [selectedShop, setSelectedShop] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [editingItem, setEditingItem] = useState<Item | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const ITEMS_PER_PAGE = 15;
 
   // Fetch shops
   const { data: shops = [], isLoading: isLoadingShops } = useShopsQuery();
@@ -29,6 +31,18 @@ export function Shop() {
       return matchesSearch;
     });
   }, [items, searchTerm]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+  const paginatedItems = filteredItems.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // Reset to first page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedShop]);
 
   // Get shop name by ID
   const getShopName = (shopId: number | null): string => {
@@ -160,7 +174,7 @@ export function Shop() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredItems.map(item => (
+                  {paginatedItems.map(item => (
                     <tr key={item.id} className="hover">
                       <td className="font-mono text-sm">{item.id}</td>
                       <td>

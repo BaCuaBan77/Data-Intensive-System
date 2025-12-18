@@ -25,6 +25,7 @@ export const UserSearchParamsSchema = z.object({
 
 // Infer TypeScript types from Zod schemas
 export type UserResponse = z.infer<typeof UserResponseSchema>
+export type User = UserResponse
 export type UserSearchParams = z.infer<typeof UserSearchParamsSchema>
 
 // API Configuration
@@ -160,6 +161,27 @@ export type MonthlyPlayersStat = z.infer<typeof MonthlyPlayersStatSchema>
 export type DailyMatchesStat = z.infer<typeof DailyMatchesStatSchema>
 export type DailySalesStat = z.infer<typeof DailySalesStatSchema>
 
+// Ban Schemas
+export const BanSchema = z.object({
+  id: z.number(),
+  player: z.object({ id: z.number(), full_name: z.string().nullable() }),
+  admin: z.object({ id: z.number(), full_name: z.string().nullable() }),
+  reason: z.string(),
+  start_time: z.string(),
+  end_time: z.string().nullable(),
+})
+
+export const CreateBanSchema = z.object({
+  player_id: z.number(),
+  admin_id: z.number(),
+  reason: z.string(),
+  start_time: z.string(), // ISO string
+  end_time: z.string().nullable(), // ISO string
+})
+
+export type Ban = z.infer<typeof BanSchema>
+export type CreateBanInput = z.infer<typeof CreateBanSchema>
+
 // Match Schema
 export const MatchSchema = z.object({
   id: z.number(),
@@ -230,6 +252,29 @@ export async function getAllMatches() {
   return z.array(MatchSchema).parse(response)
 }
 
+/**
+ * Get all bans for a user (or all bans if user_id is used for routing to DB)
+ * @param userId The ID of the user to route the request
+ * @returns Array of bans
+ */
+export async function getBans(userId: number) {
+  const response = await apiRequest<Ban[]>(`/bans?user_id=${userId}`)
+  return z.array(BanSchema).parse(response)
+}
+
+/**
+ * Ban a user
+ * @param data Ban data
+ * @returns Created ban
+ */
+export async function banUser(data: CreateBanInput) {
+  const response = await apiRequest<Ban>('/bans', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+  return BanSchema.parse(response)
+}
+
 // Default export for convenience
 const api = {
   // READ ENDPOINTS
@@ -244,6 +289,9 @@ const api = {
   getDailySalesStats,
   // MATCH ENDPOINTS
   getAllMatches,
+  // BAN ENDPOINTS
+  getBans,
+  banUser,
 }
 
 export default api
