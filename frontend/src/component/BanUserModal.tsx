@@ -14,9 +14,11 @@ export function BanUserModal({ user, onClose }: { user: User; onClose: () => voi
         endTime.setDate(endTime.getDate() + duration);
 
         try {
+            const adminId = user.id % 2 === 0 ? 6 : 3; // Hardcoded admin ID from either shard or primary DB
+
             await banUserMutation.mutateAsync({
                 player_id: user.id,
-                admin_id: 1, // Hardcoded admin ID
+                admin_id: adminId,
                 reason: reason,
                 start_time: startTime.toISOString(),
                 end_time: endTime.toISOString(),

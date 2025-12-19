@@ -24,8 +24,10 @@ export const getBansByUserId = async (user_id: number): Promise<Ban[]> => {
       FROM bans b
       JOIN users u ON u.id = b.player_id
       JOIN users ua ON ua.id = b.admin_id
+      WHERE b.player_id = $1
       ORDER BY b.id DESC;
     `,
+    values: [user_id]
   };
 
   const dbName = getDbByUserId(user_id);
