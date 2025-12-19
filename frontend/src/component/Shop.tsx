@@ -1,12 +1,13 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Search } from '@mui/icons-material';
-import { useShopsQuery, useItemsQuery } from '../hooks/queries';
-import type { Item } from '../api';
+import { useShopsQuery, useItemsQuery, useCategoriesQuery, useCreateItemMutation, useUpdateItemMutation, useDeleteItemMutation } from '../hooks/queries';
+import type { Item, CreateItemInput } from '../api';
 
 export function Shop() {
   const [selectedShop, setSelectedShop] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [editingItem, setEditingItem] = useState<Item | null>(null);
+  const [editingItem, setEditingItem] = useState<Partial<Item> | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const ITEMS_PER_PAGE = 15;
 
@@ -22,6 +23,11 @@ export function Shop() {
 
   // Fetch items for selected shop
   const { data: items = [], isLoading: isLoadingItems } = useItemsQuery(selectedShop || 0);
+  const { data: categories = [] } = useCategoriesQuery();
+
+  const createItemMutation = useCreateItemMutation();
+  const updateItemMutation = useUpdateItemMutation();
+  const deleteItemMutation = useDeleteItemMutation();
 
   // Filter items based on search term
   const filteredItems = useMemo(() => {
@@ -52,21 +58,72 @@ export function Shop() {
   };
 
   const handleEditItem = (item: Item) => {
-    setEditingItem(item);
-    // Open modal - in this case we'll use the DaisyUI modal
+    // Find category ID based on name
+    const categoryId = categories.find(c => c.title === item.category)?.id || 1;
+
+    setEditingItem({
+      ...item,
+      category: categoryId.toString() // Store as string for select value
+    });
+    setIsCreating(false);
     (document.getElementById('edit_item_modal') as HTMLDialogElement)?.showModal();
   };
 
-  const handleSaveItem = () => {
-    // TODO: Implement API call to save item
-    console.log('Saving item:', editingItem);
-    setEditingItem(null);
-    (document.getElementById('edit_item_modal') as HTMLDialogElement)?.close();
+  const handleAddItem = () => {
+    if (!selectedShop) return;
+    setEditingItem({
+      name: '',
+      description: '',
+      price: 0,
+      status: 'available',
+      category: '1', // Default category as string for input, will be parsed
+      shop_id: selectedShop,
+      picture: ''
+    });
+    setIsCreating(true);
+    (document.getElementById('edit_item_modal') as HTMLDialogElement)?.showModal();
   };
 
-  const handleDeleteItem = (itemId: number) => {
-    // TODO: Implement API call to delete item
-    console.log('Deleting item:', itemId);
+  const handleSaveItem = async () => {
+    if (!editingItem || !selectedShop) return;
+
+    try {
+      const itemData: CreateItemInput = {
+        name: editingItem.name || '',
+        description: editingItem.description || '',
+        price: Number(editingItem.price) || 0,
+        status: (editingItem.status as "available" | "not_available") || 'available',
+        category: Number(editingItem.category) || 1,
+        shop_id: selectedShop,
+        picture: editingItem.picture || undefined
+      };
+
+      if (isCreating) {
+        await createItemMutation.mutateAsync(itemData);
+      } else if (editingItem.id) {
+        await updateItemMutation.mutateAsync({
+          id: editingItem.id,
+          data: itemData
+        });
+      }
+
+      setEditingItem(null);
+      (document.getElementById('edit_item_modal') as HTMLDialogElement)?.close();
+    } catch (error) {
+      console.error('Failed to save item:', error);
+      // You might want to show an error toast here
+    }
+  };
+
+  const handleDeleteItem = async (itemId: number) => {
+    if (!selectedShop) return;
+    if (window.confirm('Are you sure you want to delete this item?')) {
+      try {
+        await deleteItemMutation.mutateAsync({ id: itemId, shopId: selectedShop });
+      } catch (error) {
+        console.error('Failed to delete item:', error);
+      }
+    }
   };
 
   if (isLoadingShops) {
@@ -131,7 +188,7 @@ export function Shop() {
               <label className="label">
                 <span className="label-text opacity-0">Add</span>
               </label>
-              <button className="btn btn-primary">
+              <button className="btn btn-primary" onClick={handleAddItem} disabled={!selectedShop}>
                 Add New Item
               </button>
             </div>
@@ -192,11 +249,8 @@ export function Shop() {
                       </td>
                       <td className="font-semibold">${item.price.toFixed(2)}</td>
                       <td>
-                        <span className={`badge ${item.status === 'available' ? 'badge-success' :
-                          item.status === 'out_of_stock' ? 'badge-warning' :
-                            'badge-error'
-                          }`}>
-                          {item.status}
+                        <span className={`badge ${item.status === 'available' ? 'badge-success' : 'badge-error'}`}>
+                          {item.status === 'available' ? 'Available' : 'Not Available'}
                         </span>
                       </td>
                       <td className="text-sm">
@@ -233,6 +287,31 @@ export function Shop() {
               )}
             </div>
           )}
+
+          {/* Pagination Controls */}
+          {filteredItems.length > 0 && (
+            <div className="flex justify-center mt-4">
+              <div className="join">
+                <button
+                  className="join-item btn"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  «
+                </button>
+                <button className="join-item btn">
+                  Page {currentPage} of {totalPages}
+                </button>
+                <button
+                  className="join-item btn"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  »
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -243,7 +322,7 @@ export function Shop() {
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
           </form>
 
-          <h3 className="font-bold text-lg mb-4">Edit Item</h3>
+          <h3 className="font-bold text-lg mb-4">{isCreating ? 'Add New Item' : 'Edit Item'}</h3>
 
           {editingItem && (
             <div className="space-y-4">
@@ -294,8 +373,7 @@ export function Shop() {
                     onChange={(e) => setEditingItem({ ...editingItem, status: e.target.value })}
                   >
                     <option value="available">Available</option>
-                    <option value="out_of_stock">Out of Stock</option>
-                    <option value="discontinued">Discontinued</option>
+                    <option value="not_available">Not Available</option>
                   </select>
                 </div>
               </div>
@@ -304,13 +382,17 @@ export function Shop() {
                 <label className="label pr-2">
                   <span className="label-text">Category</span>
                 </label>
-                {/* Note: In a real app we would fetch categories here to populate a select */}
-                <input
-                  type="text"
-                  className="input input-bordered rounded-md"
+                <select
+                  className="select select-bordered rounded-md"
                   value={editingItem.category}
                   onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
-                />
+                >
+                  {categories.map(category => (
+                    <option key={category.id} value={category.id}>
+                      {category.title}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="form-control">
@@ -327,7 +409,7 @@ export function Shop() {
 
               <div className="modal-action">
                 <button className="btn btn-primary" onClick={handleSaveItem}>
-                  Save Changes
+                  {createItemMutation.isPending || updateItemMutation.isPending ? 'Saving...' : 'Save Changes'}
                 </button>
                 <form method="dialog">
                   <button className="btn">Cancel</button>

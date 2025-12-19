@@ -45,7 +45,12 @@ async function apiRequest<T>(url: string, options?: RequestInit): Promise<T> {
     throw new Error(`API request failed: ${response.status} ${response.statusText}`)
   }
 
-  return response.json()
+  if (response.status === 204) {
+    return {} as T
+  }
+
+  const text = await response.text()
+  return text ? JSON.parse(text) : ({} as unknown as T)
 }
 
 // Helper function to build query parameters
@@ -86,9 +91,31 @@ export const ItemSchema = z.object({
   created_at: z.string(), // Date comes as string from JSON
 })
 
+export const CreateItemSchema = z.object({
+  name: z.string().min(1).max(255),
+  description: z.string().max(255),
+  price: z.number().min(0),
+  picture: z.string().max(255).optional(),
+  status: z.enum(["available", "not_available"]),
+  category: z.number().int().min(1).max(30),
+  shop_id: z.number().int().min(1).max(2),
+})
+
+export const UpdateItemSchema = z.object({
+  name: z.string().min(1).max(255).optional(),
+  description: z.string().max(255).optional(),
+  price: z.number().min(0).optional(),
+  picture: z.string().max(255).optional(),
+  status: z.enum(["available", "not_available"]).optional(),
+  category: z.number().int().min(1).max(30).optional(),
+  shop_id: z.number().int().min(1).max(2).optional(),
+})
+
 export type Shop = z.infer<typeof ShopSchema>
 export type Category = z.infer<typeof CategorySchema>
 export type Item = z.infer<typeof ItemSchema>
+export type CreateItemInput = z.infer<typeof CreateItemSchema>
+export type UpdateItemInput = z.infer<typeof UpdateItemSchema>
 
 // READ ENDPOINTS
 
@@ -129,6 +156,43 @@ export async function getCategories() {
 export async function getItems(shopId: number) {
   const response = await apiRequest<Item[]>(`/items?shop_id=${shopId}`)
   return z.array(ItemSchema).parse(response)
+}
+
+/**
+ * Create a new item
+ * @param data Item data
+ * @returns Created item
+ */
+export async function createItem(data: CreateItemInput) {
+  const response = await apiRequest<Item>('/items', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+  return ItemSchema.parse(response)
+}
+
+/**
+ * Update an existing item
+ * @param id Item ID
+ * @param data Updated item data
+ * @returns Updated item
+ */
+export async function updateItem(id: number, data: UpdateItemInput) {
+  const response = await apiRequest<Item>(`/items/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  })
+  return ItemSchema.parse(response)
+}
+
+/**
+ * Delete an item
+ * @param id Item ID
+ */
+export async function deleteItem(id: number) {
+  await apiRequest(`/items/${id}`, {
+    method: 'DELETE',
+  })
 }
 
 
@@ -282,6 +346,9 @@ const api = {
   getShops,
   getCategories,
   getItems,
+  createItem,
+  updateItem,
+  deleteItem,
   // METRICS ENDPOINTS
   getDailyActiveUsers,
   getMonthlyActiveUsers,
