@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api";
-import type { CreateBanInput } from "../api";
+import type { CreateBanInput, CreateItemInput, UpdateItemInput } from "../api";
 import type { UserSearchParams } from "../api";
 
 export function useUsersQuery(
@@ -41,6 +41,43 @@ export function useItemsQuery(shopId: number) {
             return api.getItems(shopId);
         },
         enabled: !!shopId,
+    });
+}
+
+export function useCreateItemMutation() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async (data: CreateItemInput) => {
+            return api.createItem(data);
+        },
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ["items", variables.shop_id] });
+        },
+    });
+}
+
+export function useUpdateItemMutation() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async ({ id, data }: { id: number; data: UpdateItemInput }) => {
+            return api.updateItem(id, data);
+        },
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ["items", data.shop_id] });
+        },
+    });
+}
+
+export function useDeleteItemMutation() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: async ({ id, shopId }: { id: number; shopId: number }) => {
+            await api.deleteItem(id);
+            return shopId;
+        },
+        onSuccess: (shopId) => {
+            queryClient.invalidateQueries({ queryKey: ["items", shopId] });
+        },
     });
 }
 
