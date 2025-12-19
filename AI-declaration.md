@@ -4,4 +4,8 @@ We acknowledge the use of OpenAI. (2025). ChatGPT (v4) [Large language model]. h
 AI assistance was used in the following tasks: 
 
 - Mock-up data entry generation
+- Backend SQL queries and database logic
+- Backend TypeScript validation and Zod schemas
+- Backend high-level architecture
+- Swagger documentation
 - README.md generation
